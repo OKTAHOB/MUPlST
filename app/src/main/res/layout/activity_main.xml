@@ -7,7 +7,10 @@
     android:layout_height="match_parent"
     android:background="@color/blue"
     android:orientation="vertical"
-    android:padding="@dimen/std_padding"
+    android:paddingTop="16dp"
+    android:paddingBottom="28dp"
+    android:paddingLeft="@dimen/std_padding"
+    android:paddingRight="@dimen/std_padding"
     >
 
 
@@ -21,7 +24,7 @@
             android:layout_gravity="start"
             android:text="@string/app_name"
             android:textColor="@color/white"
-            android:textSize="@dimen/headet_txt" />
+            android:textSize="@dimen/text_size_large" />
 
     </FrameLayout>
 
@@ -29,20 +32,20 @@
         android:id="@+id/srch_btn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="@color/white"
-        android:textColor="@color/black"
-        app:cornerRadius="@dimen/rounding"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/ic_padding"
-        app:iconTint="@color/black"
-        android:layout_marginTop="@dimen/margin_top"
+        android:layout_marginTop="16dp"
         android:layout_weight="3"
-        android:textAllCaps="false"
-        android:textSize="@dimen/btn_txt_size"
-
+        android:backgroundTint="@color/white"
         android:text="@string/search"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_large"
+        app:cornerRadius="@dimen/rounding"
         app:icon="@drawable/search"
-        />
+        app:iconGravity="textStart"
+
+        app:iconPadding="@dimen/ic_padding"
+        app:iconTint="@color/black" />
+
     <Button
         android:id="@+id/media_btn"
         android:layout_width="match_parent"
@@ -53,10 +56,10 @@
         app:iconGravity="textStart"
         app:iconPadding="@dimen/ic_padding"
         app:iconTint="@color/black"
-        android:layout_marginTop="@dimen/margin_top"
+
         android:layout_weight="3"
         android:textAllCaps="false"
-        android:textSize="@dimen/btn_txt_size"
+        android:textSize="@dimen/text_size_large"
 
         android:text="@string/media"
         app:icon="@drawable/media"/>
@@ -71,10 +74,10 @@
         app:iconGravity="textStart"
         app:iconPadding="@dimen/ic_padding"
         app:iconTint="@color/black"
-        android:layout_marginTop="@dimen/margin_top"
+
         android:layout_weight="3"
         android:textAllCaps="false"
-        android:textSize="@dimen/btn_txt_size"
+        android:textSize="@dimen/text_size_large"
 
         android:text="@string/settings"
         app:icon="@drawable/settings" />

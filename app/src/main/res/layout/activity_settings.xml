@@ -6,34 +6,34 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    android:padding="@dimen/std_padding">
+    android:paddingLeft="@dimen/std_padding"
+    android:paddingRight="@dimen/padd_R"
+    >
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/header_size"
-        android:orientation="horizontal"
+        android:layout_height="56dp"
         android:background="@color/white"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <ImageView
-
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/arrow"
-            />
+            android:id="@+id/back_arrow_settings"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/arrow" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="0dp"
             android:gravity="start|center"
-            android:paddingStart="12dp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
+            android:paddingStart="24dp"
             android:text="@string/settings"
-            android:textFontWeight="500"
-            android:textSize="@dimen/text_size_large" />
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_large"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
@@ -70,7 +70,8 @@
         android:layout_height="61dp"
         android:backgroundTint="@color/white"
         android:orientation="horizontal"
-        android:layout_marginTop="@dimen/margin_top">
+        android:gravity="start|center_vertical"
+        >
 
         <TextView
             android:layout_width="wrap_content"
@@ -80,7 +81,6 @@
             android:text="@string/share"
             android:textSize="@dimen/text_size_medium"
             android:textColor="@color/black"
-            android:textFontWeight="400"
             android:layout_weight="1"
             android:width="0dp"
             />
@@ -89,8 +89,8 @@
 
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginRight="12dp"
+
+            android:layout_marginEnd="6dp"
             android:src="@drawable/share" />
     </LinearLayout>
     <LinearLayout
@@ -98,7 +98,8 @@
         android:layout_height="61dp"
         android:backgroundTint="@color/white"
         android:orientation="horizontal"
-        android:layout_marginTop="@dimen/margin_top">
+        android:gravity="start|center_vertical"
+        >
 
         <TextView
             android:layout_width="wrap_content"
@@ -108,7 +109,6 @@
             android:text="@string/help"
             android:textSize="@dimen/text_size_medium"
             android:textColor="@color/black"
-            android:textFontWeight="400"
             android:layout_weight="1"
             android:width="0dp"
             />
@@ -117,8 +117,7 @@
 
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginRight="12dp"
+            android:layout_marginRight="6dp"
             android:src="@drawable/help" />
     </LinearLayout>
     <LinearLayout
@@ -126,7 +125,8 @@
         android:layout_height="61dp"
         android:backgroundTint="@color/white"
         android:orientation="horizontal"
-        android:layout_marginTop="@dimen/margin_top">
+        android:gravity="start|center_vertical"
+        >
 
         <TextView
             android:layout_width="wrap_content"
@@ -145,8 +145,7 @@
 
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginRight="12dp"
+            android:layout_marginRight="6dp"
             android:src="@drawable/arl" />
     </LinearLayout>
 

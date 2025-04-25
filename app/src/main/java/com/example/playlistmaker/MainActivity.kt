@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
+import android.content.Intent
 
 import android.os.Bundle
 import android.view.View
@@ -26,24 +27,22 @@ class MainActivity : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
         val srch_btn = findViewById<Button>(R.id.srch_btn)
-        val srch_btnClickListener: View.OnClickListener = object : View.OnClickListener {
-            override fun onClick(v: View?) {
-
-                Toast.makeText(this@MainActivity, "Poisk", Toast.LENGTH_SHORT).show()
-            }
-
-        }
-        srch_btn.setOnClickListener(srch_btnClickListener)
-
         val m_btn = findViewById<Button>(R.id.media_btn)
-
-        m_btn.setOnClickListener {
-            Toast.makeText(this@MainActivity, "media!", Toast.LENGTH_SHORT).show()
-        }
         val set_btn = findViewById<Button>(R.id.set_btn)
 
+
+        srch_btn.setOnClickListener {
+            val displayIntent = Intent(this, SearchActivity::class.java)
+            startActivity(displayIntent)
+        }
+        m_btn.setOnClickListener {
+            val displayIntent = Intent(this, LibraryActivity::class.java)
+            startActivity(displayIntent)
+        }
+
         set_btn.setOnClickListener {
-            Toast.makeText(this@MainActivity, "settings!", Toast.LENGTH_SHORT).show()
+            val displayIntent = Intent(this, SettingsActivity::class.java)
+            startActivity(displayIntent)
         }
     }
 }
