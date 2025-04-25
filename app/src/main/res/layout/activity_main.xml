@@ -26,6 +26,7 @@
     </FrameLayout>
 
     <Button
+        android:id="@+id/srch_btn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:backgroundTint="@color/white"
@@ -43,6 +44,7 @@
         app:icon="@drawable/search"
         />
     <Button
+        android:id="@+id/media_btn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:backgroundTint="@color/white"
@@ -60,6 +62,7 @@
         app:icon="@drawable/media"/>
 
     <Button
+        android:id="@+id/set_btn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:backgroundTint="@color/white"
