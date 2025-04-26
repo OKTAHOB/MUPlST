@@ -5,9 +5,10 @@
     <dimen name="ic_padding">10dp</dimen>
     <dimen name="margin_top">24dp</dimen>
     <dimen name="std_header">20dp</dimen>
-    <dimen name="header_size">64dp</dimen>
-    <dimen name="text_size_large">22dp</dimen>
-    <dimen name="text_size_medium">16dp</dimen>
+    <dimen name="header_size">56dp</dimen>
     <dimen name="std_padding">16dp</dimen>
     <dimen name="padd_R_6dp">6dp</dimen>
+
+    <dimen name="text_size_large">22sp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
 </resources>
