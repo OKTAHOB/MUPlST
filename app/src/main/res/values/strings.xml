@@ -7,4 +7,12 @@
     <string name="share">Поделиться приложением</string>
     <string name="help">Написать в поддержку</string>
     <string name="user_agr">Пользовательское соглашение</string>
+
+    <string name="share_via">Поделиться через...</string>
+
+    <string name="course_url">https://practicum.yandex.kz/profile/android-developer-plus/</string>
+    <string name="terms_url" >https://yandex.ru/legal/practicum_offer/</string>
+    <string name="sup_mail" >OKTAHOB@yandex.kz</string>
+    <string name="message_to_sup_h">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="message_to_sup">Спасибо разработчикам и разработчицам за крутое приложение!</string>
 </resources>

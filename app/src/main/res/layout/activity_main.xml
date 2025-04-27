@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/yp_blue"
+    android:background="?attr/mback"
     android:orientation="vertical"
     android:paddingBottom="28dp"
     >
@@ -32,7 +32,7 @@
         app:cornerRadius="@dimen/rounding"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/ic_padding"
-        app:iconTint="@color/black"
+        app:iconTint="@color/yp_black"
          />
 
     <Button
@@ -44,7 +44,7 @@
         app:cornerRadius="@dimen/rounding"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/ic_padding"
-        app:iconTint="@color/black"
+        app:iconTint="@color/yp_black"
         app:icon="@drawable/media"/>
 
     <Button
