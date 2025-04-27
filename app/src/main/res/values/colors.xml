@@ -5,7 +5,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="yp_white">#FFFFFF</color>
     <color name="yp_blue">#3772e7</color>
+    <color name="yp_blue_light">#9FBBF3</color>
     <color name="gray">#AEAFB4</color>
-    <color name="thumb">#CDCFD4</color>
-    <color name="track">#EFF1F3</color>
+    <color name="yp_gray">#FFAEAFB4</color>
+    <color name="yp_gray_light">#FFE6E8EB</color>
+
 </resources>
