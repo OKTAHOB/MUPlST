@@ -14,6 +14,7 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var inputEditText: EditText
     private lateinit var clearIcon: ImageView
+    private var currentSearchText: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,9 +33,22 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
+                currentSearchText = s.toString()
                 clearIcon.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
             }
         })
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("SAVED_TEXT", currentSearchText)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val savedText = savedInstanceState.getString("SAVED_TEXT")
+        inputEditText.setText(savedText)
+        clearIcon.visibility = if (savedText.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
 
     private fun setupClearButton() {
