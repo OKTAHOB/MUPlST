@@ -18,19 +18,17 @@
         app:titleTextColor="@color/yp_black"
         app:titleMarginStart="16dp"
         app:titleMarginTop="14dp"
+        style="@style/TopBar"
         app:navigationIcon="@drawable/arrow"
-        android:layout_marginBottom="24dp"
         />
 
 
     <com.google.android.material.switchmaterial.SwitchMaterial
+        style="@style/MaterialTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="20dp"
         android:text="@string/dk_theme"
-        android:textSize="@dimen/text_size_medium"
         app:thumbTint="@color/thumb_color"
         app:trackTint="@color/track_color"
 
@@ -39,33 +37,24 @@
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/MaterialTextViewStyle"
         android:drawableEnd="@drawable/share"
-        android:paddingVertical="20dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="12dp"
         android:text="@string/share"
-        android:textColor="@color/yp_black"
-        android:textSize="@dimen/text_size_medium" />
+         />
 
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/MaterialTextViewStyle"
         android:drawableEnd="@drawable/help"
-        android:paddingLeft="16dp"
-        android:paddingRight="12dp"
-        android:paddingVertical="20dp"
         android:text="@string/help"
-        android:textColor="@color/yp_black"
-        android:textSize="@dimen/text_size_medium" />
+         />
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/MaterialTextViewStyle"
         android:drawableEnd="@drawable/arl"
-        android:paddingLeft="16dp"
-        android:paddingRight="12dp"
-        android:paddingVertical="20dp"
         android:text="@string/user_agr"
-        android:textColor="@color/yp_black"
-        android:textSize="@dimen/text_size_medium" />
+        />
 
 </LinearLayout>
