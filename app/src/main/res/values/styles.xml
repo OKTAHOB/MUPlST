@@ -24,13 +24,18 @@
         <item name="android:textFontWeight">500</item>
     </style>
 
-    <style name="SettingsToolbarTitleTextStyle">
+    <style name="PerefToolbarTitleTextStyle">
         <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:textStyle">bold</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">500</item>
-    </style>
 
+    </style>
+    <style name="SearchStyle">
+        <item name="android:backgroundTint">?attr/grayL_or_white</item>
+        <item name="drawableTint">?attr/gray_or_black</item>
+        <item name="android:textColorHint">?attr/gray_or_black</item>
+    </style>
     <style name="MaterialTextViewStyle">
         <item name="android:paddingVertical">20dp</item>
         <item name="android:paddingLeft">16dp</item>

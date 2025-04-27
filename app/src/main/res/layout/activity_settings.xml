@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/header_size"
         app:title="@string/settings"
-        app:titleTextAppearance="@style/SettingsToolbarTitleTextStyle"
+        app:titleTextAppearance="@style/PerefToolbarTitleTextStyle"
         app:titleTextColor="?attr/text_swp_color"
         app:titleMarginStart="16dp"
         app:titleMarginTop="14dp"

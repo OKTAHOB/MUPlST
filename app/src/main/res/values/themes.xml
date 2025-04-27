@@ -2,6 +2,9 @@
 
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="mback">@color/yp_white</item>
+        <item name="grayL_or_white">@color/yp_gray_light</item>
+        <item name="gray_or_black">@color/yp_gray</item>
+        <item name="black_or_white">@color/yp_black</item>
     </style>
 
 
