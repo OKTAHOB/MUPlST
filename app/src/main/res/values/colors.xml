@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
+    <color name="yp_black">#1A1B22</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="yp_white">#FFFFFF</color>
+    <color name="yp_blue">#3772e7</color>
+    <color name="yp_blue_light">#9FBBF3</color>
+    <color name="gray">#AEAFB4</color>
+    <color name="yp_gray">#FFAEAFB4</color>
+    <color name="yp_gray_light">#FFE6E8EB</color>
+
 </resources>

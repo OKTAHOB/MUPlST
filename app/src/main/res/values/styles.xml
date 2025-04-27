@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ToolbarTitleTextStyle">
+        <item name="android:textSize">@dimen/text_size_large</item>
+    </style>
+
+    <style name="SettingsToolbarTitleTextStyle">
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>
