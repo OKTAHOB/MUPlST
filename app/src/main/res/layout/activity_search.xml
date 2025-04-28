@@ -41,7 +41,7 @@
             android:inputType="text"
             android:maxLines="1"
             android:paddingStart="12dp"
-            android:textColor="?attr/gray_or_black"
+            android:textColor="@color/yp_black"
             android:textCursorDrawable="@drawable/cursor"
             android:textSize="@dimen/text_size_medium"
             app:drawableSize="16dp" />

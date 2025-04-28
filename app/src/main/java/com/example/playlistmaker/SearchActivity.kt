@@ -47,12 +47,12 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("SAVED_TEXT", currentSearchText)
+        outState.putString(getString(R.string.saved_txt), currentSearchText)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        val savedText = savedInstanceState.getString("SAVED_TEXT") ?: ""
+        val savedText = savedInstanceState.getString(getString(R.string.saved_txt)) ?: ""
         currentSearchText = savedText
         inputEditText.setText(savedText)
         clearIcon.visibility = if (savedText.isEmpty()) View.GONE else View.VISIBLE
