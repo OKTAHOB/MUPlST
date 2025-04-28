@@ -31,8 +31,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:text="@string/dk_theme"
-        app:thumbTint="?attr/mthumb"
-        app:trackTint="?attr/mtrack"
+        app:thumbTint="@color/thumb_color"
+        app:trackTint="@color/track_color"
 
         />
 

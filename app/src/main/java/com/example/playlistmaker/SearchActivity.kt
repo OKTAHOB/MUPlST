@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.appbar.MaterialToolbar
 
 class SearchActivity : AppCompatActivity() {
 
@@ -19,6 +20,11 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+        val backArrow = findViewById<MaterialToolbar>(R.id.top_toolbar_frame)
+
+        backArrow.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         inputEditText = findViewById(R.id.inputEditText)
         clearIcon = findViewById(R.id.clearIcon)
@@ -46,9 +52,10 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        val savedText = savedInstanceState.getString("SAVED_TEXT")
+        val savedText = savedInstanceState.getString("SAVED_TEXT") ?: ""
+        currentSearchText = savedText
         inputEditText.setText(savedText)
-        clearIcon.visibility = if (savedText.isNullOrEmpty()) View.GONE else View.VISIBLE
+        clearIcon.visibility = if (savedText.isEmpty()) View.GONE else View.VISIBLE
     }
 
     private fun setupClearButton() {
