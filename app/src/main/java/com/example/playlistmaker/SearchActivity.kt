@@ -26,8 +26,8 @@ class SearchActivity : AppCompatActivity() {
 
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = Adapter(emptyList())
-        recyclerView.adapter = adapter
+//        adapter = Adapter(emptyList())
+        recyclerView.adapter = Adapter(setupTracks())
 //
         val backArrow = findViewById<MaterialToolbar>(R.id.top_toolbar_frame)
 
@@ -85,12 +85,12 @@ class SearchActivity : AppCompatActivity() {
 
                 currentSearchText = s.toString()
                 clearIcon.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-                if (currentSearchText.isNotEmpty()) {
-                    adapter.updateData(setupTracks())
-                }
-                else{
-                    adapter.updateData(emptyList())
-                }
+//                if (currentSearchText.isNotEmpty()) {
+//                    adapter.updateData(setupTracks())
+//                }
+//                else{
+//                    adapter.updateData(emptyList())
+//                }
             }
 
         })

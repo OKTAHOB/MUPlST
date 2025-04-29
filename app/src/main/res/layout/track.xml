@@ -2,13 +2,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="61dp">
+    android:layout_height="@dimen/track_bar_size">
 
     <ImageView
         android:id="@+id/artwork"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginLeft="13dp"
+        android:layout_width="@dimen/img_sq"
+        android:layout_height="@dimen/img_sq"
+        android:layout_marginStart="@dimen/img_sq_start_marg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/arl"
-        android:layout_marginRight="12dp"
+        android:layout_marginEnd="@dimen/margin_music_end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -27,9 +27,8 @@
     <TextView
         android:id="@+id/trackName"
         style="@style/trackName"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/zero"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
         android:maxLines="1"
         app:layout_constraintBottom_toTopOf="@+id/artist_line"
         app:layout_constraintEnd_toStartOf="@id/arl"
@@ -39,8 +38,8 @@
 
     <LinearLayout
         android:id="@+id/artist_line"
-        android:layout_marginLeft="8dp"
-        android:layout_width="0dp"
+        android:layout_marginStart="@dimen/margin_music_start"
+        android:layout_width="@dimen/zero"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"

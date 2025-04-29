@@ -25,7 +25,7 @@ class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 RequestOptions()
                     .placeholder(R.drawable.ic_placeholder)
                     .error(R.drawable.ic_placeholder)
-                    .transform(RoundedCorners(16))
+                    .transform(RoundedCorners(2))
             )
             .into(ivArtwork)
     }
