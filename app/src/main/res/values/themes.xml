@@ -1,10 +1,26 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<resources>
+
+    <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="mback">@color/yp_white</item>
+        <item name="grayL_or_white">@color/yp_gray_light</item>
+        <item name="gray_or_black">@color/yp_gray</item>
+        <item name="black_or_white">@color/yp_black</item>
     </style>
 
-    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
+
+    <style name="Theme.PlaylistMaker.MainActivity" parent="Base.Theme.PlaylistMaker">
+        <item name="mback">@color/yp_blue</item>
+    </style>
+    <style name="Theme.PlaylistMaker.Search" parent="Base.Theme.PlaylistMaker">
+
+    </style>
+
+    <style name="Theme.PlaylistMaker.Settings" parent="Base.Theme.PlaylistMaker">
+        <item name="text_swp_color">@color/yp_black</item>
+        <item name="icons_swp_color">@color/yp_gray</item>
+        <item name="mthumb">@color/yp_gray</item>
+        <item name="mtrack">@color/yp_gray_light</item>
+
+    </style>
 
 </resources>

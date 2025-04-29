@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -10,7 +11,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+        android:theme="@style/Base.Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
             android:name=".SearchActivity"
@@ -20,10 +21,12 @@
             android:exported="false" />
         <activity
             android:name=".SettingsActivity"
+            android:theme="@style/Theme.PlaylistMaker.Settings"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.PlaylistMaker.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

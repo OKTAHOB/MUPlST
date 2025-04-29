@@ -1,11 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="ToolbarTitleTextStyle">
-        <item name="android:textSize">@dimen/text_size_large</item>
+
+    <style name="TopBar">
+        <item name="android:layout_marginBottom">24dp</item>
     </style>
 
-    <style name="SettingsToolbarTitleTextStyle">
+    <style name="MainMenuBtnsStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_weight">3</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/yp_black</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:layout_marginStart">@dimen/margin_btn</item>
+        <item name="android:layout_marginEnd">@dimen/margin_btn</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+
+    </style>
+
+    <style name="ToolbarTitleTextStyle">
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+
+    <style name="PerefToolbarTitleTextStyle">
         <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+
+    </style>
+    <style name="SearchStyle">
+        <item name="android:backgroundTint">?attr/grayL_or_white</item>
+        <item name="drawableTint">?attr/gray_or_black</item>
+        <item name="android:textColorHint">?attr/gray_or_black</item>
+    </style>
+    <style name="MaterialTextViewStyle">
+        <item name="android:paddingVertical">20dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:textColor">?attr/text_swp_color</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:drawableTint">?attr/icons_swp_color</item>
+
     </style>
 </resources>

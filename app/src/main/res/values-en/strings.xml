@@ -8,4 +8,14 @@
     <string name="share">Share app</string>
     <string name="help">Write us</string>
     <string name="user_agr">User agreement</string>
+
+    <string name="share_via">Share via...</string>
+
+    <string name="saved_txt">SAVED_TEXT</string>
+
+    <string name="course_url">https://practicum.yandex.kz/profile/android-developer-plus/</string>
+    <string name="terms_url" >https://yandex.ru/legal/practicum_offer/</string>
+    <string name="sup_mail" >OKTAHOB@yandex.kz</string>
+    <string name="message_to_sup_h">Message to the developers of the Playlist Maker app</string>
+    <string name="message_to_sup">Thanks to the developers for a cool app!</string>
 </resources>
