@@ -7,5 +7,6 @@
     <attr name="mthumb" format="color"/>
     <attr name="grayL_or_white" format="color"/>
     <attr name="gray_or_black" format="color"/>
+    <attr name="gray_or_white" format="color"/>
     <attr name="black_or_white" format="color"/>
 </resources>

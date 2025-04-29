@@ -6,6 +6,7 @@
         <item name="mback">@color/yp_black</item>
         <item name="grayL_or_white">@color/yp_white</item>
         <item name="gray_or_black">@color/yp_black</item>
+        <item name="gray_or_white">@color/yp_white</item>
         <item name="black_or_white">@color/yp_white</item>
     </style>
 

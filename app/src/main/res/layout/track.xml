@@ -1,0 +1,69 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="61dp">
+
+    <ImageView
+        android:id="@+id/artwork"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginLeft="13dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/arl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/arl"
+        android:layout_marginRight="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="?attr/gray_or_white" />
+
+    <TextView
+        android:id="@+id/trackName"
+        style="@style/trackName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@+id/artist_line"
+        app:layout_constraintEnd_toStartOf="@id/arl"
+        app:layout_constraintStart_toEndOf="@id/artwork"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <LinearLayout
+        android:id="@+id/artist_line"
+        android:layout_marginLeft="8dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/arl"
+        app:layout_constraintStart_toEndOf="@id/artwork"
+        app:layout_constraintTop_toBottomOf="@id/trackName">
+
+        <TextView
+            android:id="@+id/artistName"
+            style="@style/artistName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/point" />
+
+        <TextView
+            android:id="@+id/trackTime"
+            style="@style/artistName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
