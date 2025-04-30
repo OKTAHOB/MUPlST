@@ -13,6 +13,10 @@
 
     <string name="saved_txt">SAVED_TEXT</string>
 
+    <string name="no_results">Nothing was found</string>
+    <string name="error_message">Connection problems\n\nLoad failed. Check your internet connection</string>
+    <string name="retry">Retry</string>
+
     <string name="course_url">https://practicum.yandex.kz/profile/android-developer-plus/</string>
     <string name="terms_url" >https://yandex.ru/legal/practicum_offer/</string>
     <string name="sup_mail" >OKTAHOB@yandex.kz</string>

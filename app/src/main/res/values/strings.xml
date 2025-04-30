@@ -12,6 +12,10 @@
 
     <string name="saved_txt">SAVED_TEXT</string>
 
+    <string name="no_results">Ничего не нашлось</string>
+    <string name="error_message">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+
+    <string name="retry">Обновить</string>
 
     <string name="course_url">https://practicum.yandex.kz/profile/android-developer-plus/</string>
     <string name="terms_url" >https://yandex.ru/legal/practicum_offer/</string>
