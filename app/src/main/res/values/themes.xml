@@ -6,6 +6,7 @@
         <item name="gray_or_black">@color/yp_gray</item>
         <item name="gray_or_white">@color/yp_gray</item>
         <item name="black_or_white">@color/yp_black</item>
+        <item name="white_or_black">@color/yp_white</item>
     </style>
 
 
