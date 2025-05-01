@@ -14,6 +14,8 @@
 
     <string name="no_results">Ничего не нашлось</string>
     <string name="error_message">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="vi_search">Вы искали</string>
+    <string name="clear_history">Очистить историю</string>
 
     <string name="retry">Обновить</string>
 

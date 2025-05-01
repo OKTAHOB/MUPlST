@@ -19,14 +19,13 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        switchMaterial = findViewById(R.id.settings_switch)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.settings_switch)
+        val app = applicationContext as App
 
-        updateSwitchState()
+        themeSwitcher.isChecked = app.darkTheme
 
-        switchMaterial.setOnCheckedChangeListener { _, isChecked ->
-            if (!isSystemThemeUpdate) {
-                setAppTheme(isChecked)
-            }
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
+            app.switchTheme(checked)
         }
 
         val backArrow = findViewById<MaterialToolbar>(R.id.settings_appbar)
