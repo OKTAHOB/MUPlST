@@ -5,17 +5,20 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class Adapter(private var tracks: List<Track>) : RecyclerView.Adapter<ViewHolder>() {
+class Adapter(
+    private var tracks: List<Track>,
+    private val onClick: (Track) -> Unit
+) : RecyclerView.Adapter<ViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.track, parent, false)
         return ViewHolder(view)
     }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(tracks[position])
+        holder.itemView.setOnClickListener { onClick(tracks[position]) }
     }
-
 
     override fun getItemCount() = tracks.size
 

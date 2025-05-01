@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,21 +25,53 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var inputEditText: EditText
     private lateinit var clearIcon: ImageView
     private var currentSearchText: String = ""
-    private lateinit var adapter: Adapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var placeholderNoResults: LinearLayout
     private lateinit var placeholderError: LinearLayout
     private lateinit var retryButton: Button
     private var currentCall: Call<SearchResponse>? = null
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var historyTitle: TextView
+    private lateinit var clearHistoryButton: Button
+    private lateinit var historyAdapter: Adapter
+    private lateinit var searchAdapter: Adapter
+    private lateinit var historyRecyclerView: RecyclerView
+    private lateinit var historyContainer: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        searchHistory = SearchHistory(getSharedPreferences("search_history", MODE_PRIVATE))
+
+
         setupViews()
         setupRecyclerView()
         setupListeners()
+        checkHistoryVisibility()
+    }
 
+
+
+    private fun hideSearchHistory() {
+        historyContainer.visibility = View.GONE
+    }
+
+    private fun clearSearchResults() {
+        searchAdapter.updateData(emptyList())
+        recyclerView.visibility = View.GONE
+        showSearchHistory()
+    }
+    private fun checkHistoryVisibility() {
+        if (inputEditText.text.isNullOrEmpty()) {
+            showSearchHistory()
+        }
+    }
+
+    fun clearHistory(view: View) {
+        searchHistory.clear()
+        historyAdapter.updateData(emptyList())
+        checkHistoryVisibility()
     }
 
     private fun setupViews() {
@@ -48,6 +81,10 @@ class SearchActivity : AppCompatActivity() {
         placeholderNoResults = findViewById(R.id.placeholder_no_res)
         placeholderError = findViewById(R.id.placeholder_on_err)
         retryButton = findViewById(R.id.retryButton)
+        historyTitle = findViewById(R.id.historyTitle)
+        clearHistoryButton = findViewById(R.id.clearHistoryButton)
+        historyContainer = findViewById(R.id.historyContainer)
+        historyRecyclerView = findViewById(R.id.historyRecyclerView)
         val backArrow = findViewById<MaterialToolbar>(R.id.top_toolbar_frame)
 
 
@@ -57,12 +94,34 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = Adapter(emptyList())
+        historyAdapter = Adapter(emptyList()) { track ->
+            searchHistory.addTrack(track)
+        }
+        historyRecyclerView.layoutManager = LinearLayoutManager(this)
+        historyRecyclerView.adapter = historyAdapter
+
+        searchAdapter = Adapter(emptyList()) { track ->
+            searchHistory.addTrack(track)
+        }
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
+        recyclerView.adapter = searchAdapter
     }
 
     private fun setupListeners() {
+        inputEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrEmpty()) {
+                    showSearchHistory()
+                } else {
+                    hideSearchHistory()
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 performSearch(inputEditText.text.toString().trim())
@@ -92,7 +151,10 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun performSearch(str: String) {
-        if (str.isEmpty()) return
+        if (str.isEmpty()) {
+            showSearchHistory()
+            return
+        }
         currentSearchText = str
         hideKeyboard()
 
@@ -103,7 +165,7 @@ class SearchActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val searchResponse = response.body()
                     if (searchResponse?.results?.isNotEmpty() == true) {
-                        adapter.updateData(searchResponse.results)
+                        searchAdapter.updateData(searchResponse.results)
                         showSearchResults()
                     } else {
                         showNoResults()
@@ -121,24 +183,33 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showSearchResults() {
         recyclerView.visibility = View.VISIBLE
+        historyContainer.visibility = View.GONE
         placeholderNoResults.visibility = View.GONE
         placeholderError.visibility = View.GONE
     }
     private fun showNoResults() {
         recyclerView.visibility = View.GONE
+        historyContainer.visibility = View.GONE
         placeholderNoResults.visibility = View.VISIBLE
         placeholderError.visibility = View.GONE
     }
     private fun showError() {
         recyclerView.visibility = View.GONE
+        historyContainer.visibility = View.GONE
         placeholderNoResults.visibility = View.GONE
         placeholderError.visibility = View.VISIBLE
     }
-    private fun clearSearchResults() {
-        adapter.updateData(emptyList())
-        recyclerView.visibility = View.GONE
-        placeholderNoResults.visibility = View.GONE
-        placeholderError.visibility = View.GONE
+    private fun showSearchHistory() {
+        val history = searchHistory.getHistory()
+        if (history.isNotEmpty()) {
+            historyContainer.visibility = View.VISIBLE
+            historyAdapter.updateData(history)
+            recyclerView.visibility = View.GONE
+            placeholderNoResults.visibility = View.GONE
+            placeholderError.visibility = View.GONE
+        } else {
+            hideSearchHistory()
+        }
     }
 
 

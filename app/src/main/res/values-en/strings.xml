@@ -16,6 +16,8 @@
     <string name="no_results">Nothing was found</string>
     <string name="error_message">Connection problems\n\nLoad failed. Check your internet connection</string>
     <string name="retry">Retry</string>
+    <string name="vi_search">Your search</string>
+    <string name="clear_history">Clear history</string>
 
     <string name="course_url">https://practicum.yandex.kz/profile/android-developer-plus/</string>
     <string name="terms_url" >https://yandex.ru/legal/practicum_offer/</string>
