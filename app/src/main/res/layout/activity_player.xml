@@ -23,14 +23,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.07" />
+                app:layout_constraintGuide_begin="16dp" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/rightGuideline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.93" />
+                app:layout_constraintGuide_end="16dp" />
 
             <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/player_barrier_title"
@@ -53,8 +53,12 @@
             <ImageView
                 android:id="@+id/player_art"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_height="0dp"
+                app:layout_constraintWidth_min="312dp"
+                app:layout_constraintHeight_min="312dp"
+                app:layout_constraintDimensionRatio="1:1"
+                android:layout_marginTop="26dp"
+                android:layout_marginHorizontal="8dp"
                 android:src="@drawable/placeholder"
                 app:layout_constraintEnd_toStartOf="@id/rightGuideline"
                 app:layout_constraintStart_toEndOf="@id/leftGuideline"
@@ -67,6 +71,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="8dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/ys_display_medium"
                 android:maxLines="1"
@@ -84,6 +89,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="8dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/ys_display_medium"
                 android:maxLines="1"
@@ -99,6 +105,7 @@
                 app:tint="@color/yp_black"
                 android:src="@drawable/btn_back"
                 android:layout_width="0dp"
+                android:layout_marginStart="8dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="@id/player_btn_play"
                 app:layout_constraintStart_toEndOf="@id/leftGuideline"
@@ -109,6 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/btn_add"
+
                 app:layout_constraintStart_toStartOf="@id/player_btn_add_to_list"
                 app:layout_constraintEnd_toEndOf="@id/player_btn_add_to_list"
                 app:layout_constraintTop_toTopOf="@id/player_btn_add_to_list"
@@ -138,6 +146,7 @@
                 android:id="@+id/player_btn_like"
                 app:tint="@color/yp_black"
                 android:layout_width="0dp"
+                android:layout_marginEnd="8dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/btn_back"
                 app:layout_constraintBottom_toBottomOf="@id/player_btn_play"
