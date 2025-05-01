@@ -27,4 +27,5 @@ class Adapter(
         tracks = newTracks
         notifyDataSetChanged()
     }
+
 }

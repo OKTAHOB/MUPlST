@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -96,12 +98,20 @@ class SearchActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         historyAdapter = Adapter(emptyList()) { track ->
             searchHistory.addTrack(track)
+            val intent = Intent(this@SearchActivity, PlayerActivity::class.java).apply {
+                putExtra("TRACK_JSON", Gson().toJson(track))
+            }
+            startActivity(intent)
         }
         historyRecyclerView.layoutManager = LinearLayoutManager(this)
         historyRecyclerView.adapter = historyAdapter
 
         searchAdapter = Adapter(emptyList()) { track ->
             searchHistory.addTrack(track)
+            val intent = Intent(this@SearchActivity, PlayerActivity::class.java).apply {
+                putExtra("TRACK_JSON", Gson().toJson(track))
+            }
+            startActivity(intent)
         }
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = searchAdapter

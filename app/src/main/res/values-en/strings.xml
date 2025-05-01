@@ -18,6 +18,12 @@
     <string name="retry">Retry</string>
     <string name="vi_search">Your search</string>
     <string name="clear_history">Clear history</string>
+    <string name="player_track_time">Time</string>
+    <string name="player_track_album">Album</string>
+    <string name="player_track_year">Year</string>
+    <string name="player_track_genre">Genre</string>
+    <string name="player_track_country">Contry</string>
+    <string name="std_time" >00:00</string>
 
     <string name="course_url">https://practicum.yandex.kz/profile/android-developer-plus/</string>
     <string name="terms_url" >https://yandex.ru/legal/practicum_offer/</string>
