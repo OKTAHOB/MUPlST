@@ -84,4 +84,23 @@
         <item name="android:backgroundTint">?attr/black_or_white</item>
 
     </style>
+    <style name="player_track_title">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:paddingVertical">8dp</item>
+    </style>
+
+    <style name="player_track_value">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textColor">?attr/black_or_white</item>
+        <item name="android:textAlignment">textEnd</item>
+        <item name="android:paddingVertical">8dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
 </resources>
