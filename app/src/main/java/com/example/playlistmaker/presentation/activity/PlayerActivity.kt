@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.activity
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.model.Track
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -51,7 +53,7 @@ class PlayerActivity : AppCompatActivity() {
         currentTimeTextView = findViewById(R.id.player_current_time)
 
         Glide.with(this)
-            .load(track.getCoverArtwork())
+            .load(track.artworkUrl100)
             .placeholder(R.drawable.placeholder)
             .into(findViewById(R.id.player_art))
 
@@ -71,8 +73,8 @@ class PlayerActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.player_track_genre_value).text = track.primaryGenreName
         findViewById<TextView>(R.id.player_track_country_value).text = track.country
 
-        val minutes = track.trackTime?.div(60000) ?: 0
-        val seconds = ((track.trackTime?.rem(60000)) ?: 0) / 1000
+        val minutes = track.trackTime / 60000
+        val seconds = (track.trackTime % 60000) / 1000
         findViewById<TextView>(R.id.player_track_time_value).text =
             String.format("%02d:%02d", minutes, seconds)
     }
