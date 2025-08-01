@@ -1,9 +1,6 @@
 package com.example.playlistmaker.presentation.activity
 
-import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,37 +8,30 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.domain.usecase.interactor.PlayerInteractor
+import com.example.playlistmaker.presentation.util.Creator
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
 
+    private lateinit var playerInteractor: PlayerInteractor
     private lateinit var track: Track
-    private lateinit var mediaPlayer: MediaPlayer
-    private lateinit var handler: Handler
     private lateinit var playButton: ImageView
     private lateinit var currentTimeTextView: TextView
-    private var updateTimeRunnable: Runnable? = null
+    private var isPlaying = false
 
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
+        private const val UPDATE_TIME_DELAY = 300L
     }
-
-    private var playerState = STATE_DEFAULT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
 
-        val trackJson = intent.getStringExtra("TRACK_JSON") ?: ""
-        track = Gson().fromJson(trackJson, Track::class.java)
-
-        mediaPlayer = MediaPlayer()
-        handler = Handler(Looper.getMainLooper())
+        playerInteractor = Creator.providePlayerInteractor()
+        track = Gson().fromJson(intent.getStringExtra("TRACK_JSON"), Track::class.java)
 
         initViews()
         setupBackButton()
@@ -80,102 +70,66 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun preparePlayer() {
-        try {
-            mediaPlayer.setDataSource(track.previewUrl)
-            mediaPlayer.prepareAsync()
-
-            mediaPlayer.setOnPreparedListener {
-                playerState = STATE_PREPARED
+        playerInteractor.preparePlayer(
+            track.previewUrl,
+            onPrepared = {
                 playButton.isEnabled = true
                 playButton.setImageResource(R.drawable.btn_play)
-            }
-
-            mediaPlayer.setOnCompletionListener {
-                playerState = STATE_PREPARED
+            },
+            onCompletion = {
+                isPlaying = false
                 playButton.setImageResource(R.drawable.btn_play)
-                stopTimeUpdater()
                 currentTimeTextView.text = "00:00"
             }
+        )
 
-            playButton.setOnClickListener {
-                playbackControl()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        playButton.setOnClickListener {
+            playbackControl()
         }
     }
 
     private fun playbackControl() {
-        when (playerState) {
-            STATE_PREPARED -> {
-                mediaPlayer.seekTo(0)
-                startPlayback()
-            }
-            STATE_PAUSED -> startPlayback()
-            STATE_PLAYING -> pausePlayback()
+        if (isPlaying) {
+            playerInteractor.pausePlayer()
+            playButton.setImageResource(R.drawable.btn_play)
+        } else {
+            playerInteractor.startPlayer()
+            playButton.setImageResource(R.drawable.btn_pause)
+            startTimeUpdater()
         }
-    }
-
-    private fun startPlayback() {
-        mediaPlayer.start()
-        playerState = STATE_PLAYING
-        playButton.setImageResource(R.drawable.btn_pause)
-        startTimeUpdater()
-    }
-
-    private fun pausePlayback() {
-        mediaPlayer.pause()
-        playerState = STATE_PAUSED
-        playButton.setImageResource(R.drawable.btn_play)
-        stopTimeUpdater()
-    }
-
-    private fun stopPlayback() {
-        mediaPlayer.stop()
-        playerState = STATE_PREPARED
-        mediaPlayer.prepareAsync()
-        playButton.setImageResource(R.drawable.btn_play)
-        stopTimeUpdater()
-        currentTimeTextView.text = "00:00"
+        isPlaying = !isPlaying
     }
 
     private fun startTimeUpdater() {
-        updateTimeRunnable = object : Runnable {
-            override fun run() {
-                val currentPosition = mediaPlayer.currentPosition
-                val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
-                currentTimeTextView.text = formattedTime
-                handler.postDelayed(this, 300)
-            }
-        }
-        handler.post(updateTimeRunnable as Runnable)
+        currentTimeTextView.postDelayed(updateTimeRunnable, UPDATE_TIME_DELAY)
     }
 
-    private fun stopTimeUpdater() {
-        updateTimeRunnable?.let {
-            handler.removeCallbacks(it)
+    private val updateTimeRunnable = object : Runnable {
+        override fun run() {
+            if (isPlaying) {
+                val currentPosition = playerInteractor.getCurrentPosition()
+                val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
+                currentTimeTextView.text = formattedTime
+                currentTimeTextView.postDelayed(this, UPDATE_TIME_DELAY)
+            }
         }
     }
 
     override fun onPause() {
         super.onPause()
-        if (playerState == STATE_PLAYING) {
-            pausePlayback()
+        if (isPlaying) {
+            playerInteractor.pausePlayer()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        stopTimeUpdater()
-        handler.removeCallbacksAndMessages(null)
-        mediaPlayer.release()
+        playerInteractor.releasePlayer()
+        currentTimeTextView.removeCallbacks(updateTimeRunnable)
     }
 
     private fun setupBackButton() {
         findViewById<ImageView>(R.id.player_back).setOnClickListener {
-            if (playerState == STATE_PLAYING || playerState == STATE_PAUSED) {
-                stopPlayback()
-            }
             finish()
         }
     }

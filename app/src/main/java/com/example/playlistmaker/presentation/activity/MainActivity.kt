@@ -2,6 +2,7 @@ package com.example.playlistmaker.presentation.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -14,33 +15,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setupWindowInsets()
-        setupNavigationButtons()
-    }
-
-    private fun setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById<LinearLayout>(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             WindowInsetsCompat.CONSUMED
         }
-    }
 
-    private fun setupNavigationButtons() {
         findViewById<Button>(R.id.srch_btn).setOnClickListener {
-            navigateTo(SearchActivity::class.java)
+            startActivity(Intent(this, SearchActivity::class.java))
         }
 
         findViewById<Button>(R.id.media_btn).setOnClickListener {
-            navigateTo(LibraryActivity::class.java)
+            startActivity(Intent(this, LibraryActivity::class.java))
         }
 
         findViewById<Button>(R.id.set_btn).setOnClickListener {
-            navigateTo(SettingsActivity::class.java)
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
-    }
-
-    private fun navigateTo(activityClass: Class<*>) {
-        startActivity(Intent(this, activityClass))
     }
 }
