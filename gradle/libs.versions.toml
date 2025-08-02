@@ -12,6 +12,8 @@ activity = "1.8.0"
 constraintlayout = "2.1.4"
 retrofit = "2.11.0"
 gson = "2.9.0"
+lifecycle = "2.7.0"
+fragment = "1.6.2"
 
 
 [libraries]
@@ -20,6 +22,12 @@ retrofit = {module ="com.squareup.retrofit2:retrofit", version.ref = "retrofit"}
 gson = {module ="com.squareup.retrofit2:converter-gson", version.ref = "gson"}
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
+# MVVM dependencies
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activity" }
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
