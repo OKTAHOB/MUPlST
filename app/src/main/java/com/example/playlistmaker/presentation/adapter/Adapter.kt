@@ -1,9 +1,11 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.model.Track
 
 class Adapter(
     private var tracks: List<Track>,
@@ -15,6 +17,7 @@ class Adapter(
             .inflate(R.layout.track, parent, false)
         return ViewHolder(view)
     }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener { onClick(tracks[position]) }
@@ -27,5 +30,4 @@ class Adapter(
         tracks = newTracks
         notifyDataSetChanged()
     }
-
 }

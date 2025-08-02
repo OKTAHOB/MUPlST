@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.activity
 
 import android.content.Context
 import android.content.Intent
@@ -17,16 +17,21 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.domain.usecase.interactor.SearchInteractor
+import com.example.playlistmaker.presentation.adapter.Adapter
+import com.example.playlistmaker.presentation.util.Creator
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.launch
 
 class SearchActivity : AppCompatActivity() {
 
+    private lateinit var searchInteractor: SearchInteractor
     private lateinit var inputEditText: EditText
     private lateinit var clearIcon: ImageView
     private var currentSearchText: String = ""
@@ -34,8 +39,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderNoResults: LinearLayout
     private lateinit var placeholderError: LinearLayout
     private lateinit var retryButton: Button
-    private var currentCall: Call<SearchResponse>? = null
-    private lateinit var searchHistory: SearchHistory
     private lateinit var historyTitle: TextView
     private lateinit var clearHistoryButton: Button
     private lateinit var historyAdapter: Adapter
@@ -48,12 +51,16 @@ class SearchActivity : AppCompatActivity() {
     private var searchRunnable: Runnable? = null
     private var currentDebounceText = ""
 
+    companion object {
+        private const val SEARCH_QUERY_KEY = "search_query"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        searchHistory = SearchHistory(getSharedPreferences("search_history", MODE_PRIVATE))
-
+        searchInteractor = Creator.provideSearchInteractor(this)
 
         setupViews()
         setupRecyclerView()
@@ -70,6 +77,7 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.visibility = View.GONE
         showSearchHistory()
     }
+
     private fun checkHistoryVisibility() {
         if (inputEditText.text.isNullOrEmpty()) {
             showSearchHistory()
@@ -77,7 +85,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     fun clearHistory(view: View) {
-        searchHistory.clear()
+        searchInteractor.clearSearchHistory()
         historyAdapter.updateData(emptyList())
         checkHistoryVisibility()
     }
@@ -103,7 +111,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         historyAdapter = Adapter(emptyList()) { track ->
-            searchHistory.addTrack(track)
+            searchInteractor.addTrackToHistory(track)
             val intent = Intent(this@SearchActivity, PlayerActivity::class.java).apply {
                 putExtra("TRACK_JSON", Gson().toJson(track))
             }
@@ -113,7 +121,7 @@ class SearchActivity : AppCompatActivity() {
         historyRecyclerView.adapter = historyAdapter
 
         searchAdapter = Adapter(emptyList()) { track ->
-            searchHistory.addTrack(track)
+            searchInteractor.addTrackToHistory(track)
             val intent = Intent(this@SearchActivity, PlayerActivity::class.java).apply {
                 putExtra("TRACK_JSON", Gson().toJson(track))
             }
@@ -136,17 +144,14 @@ class SearchActivity : AppCompatActivity() {
                     handler.postDelayed(searchRunnable!!, SEARCH_DEBOUNCE_DELAY)
                 }
             }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 performSearch(inputEditText.text.toString().trim())
                 handler.removeCallbacksAndMessages(null)
-                performSearch(inputEditText.text.toString().trim())
                 true
             } else {
                 false
@@ -187,30 +192,22 @@ class SearchActivity : AppCompatActivity() {
 
         currentSearchText = str
         hideKeyboard()
-        currentCall?.cancel()
-        val call = RetrofitClient.musicApiService.search(str)
 
-        call.enqueue(object : Callback<SearchResponse> {
-            override fun onResponse(call: Call<SearchResponse>, response: Response<SearchResponse>) {
-                progressBar.visibility = View.GONE
-                if (response.isSuccessful) {
-                    val searchResponse = response.body()
-                    if (searchResponse?.results?.isNotEmpty() == true) {
-                        searchAdapter.updateData(searchResponse.results)
-                        showSearchResults()
-                    } else {
-                        showNoResults()
-                    }
+        lifecycleScope.launch {
+            try {
+                val tracks = searchInteractor.searchTracks(str)
+                if (tracks.isNotEmpty()) {
+                    searchAdapter.updateData(tracks)
+                    showSearchResults()
                 } else {
-                    showError()
+                    showNoResults()
                 }
-            }
-
-            override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
-                progressBar.visibility = View.GONE
+            } catch (e: Exception) {
                 showError()
+            } finally {
+                progressBar.visibility = View.GONE
             }
-        })
+        }
     }
 
     private fun showSearchResults() {
@@ -219,20 +216,23 @@ class SearchActivity : AppCompatActivity() {
         placeholderNoResults.visibility = View.GONE
         placeholderError.visibility = View.GONE
     }
+
     private fun showNoResults() {
         recyclerView.visibility = View.GONE
         historyContainer.visibility = View.GONE
         placeholderNoResults.visibility = View.VISIBLE
         placeholderError.visibility = View.GONE
     }
+
     private fun showError() {
         recyclerView.visibility = View.GONE
         historyContainer.visibility = View.GONE
         placeholderNoResults.visibility = View.GONE
         placeholderError.visibility = View.VISIBLE
     }
+
     private fun showSearchHistory() {
-        val history = searchHistory.getHistory()
+        val history = searchInteractor.getSearchHistory()
         if (history.isNotEmpty()) {
             historyContainer.visibility = View.VISIBLE
             historyAdapter.updateData(history)
@@ -245,10 +245,10 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_QUERY_KEY, inputEditText.text.toString())    }
+        outState.putString(SEARCH_QUERY_KEY, inputEditText.text.toString())
+    }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
@@ -261,14 +261,9 @@ class SearchActivity : AppCompatActivity() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(inputEditText.windowToken, 0)
     }
-    companion object {
-        private const val SEARCH_QUERY_KEY = "search_query"
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-    }
+
     override fun onDestroy() {
         super.onDestroy()
-        currentCall?.cancel()
         handler.removeCallbacksAndMessages(null)
     }
-
 }

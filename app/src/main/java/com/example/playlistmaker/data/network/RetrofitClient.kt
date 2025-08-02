@@ -1,6 +1,5 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data.network
 
-import com.example.playlistmaker.retrofit.ApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.create
