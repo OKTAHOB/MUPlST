@@ -191,6 +191,7 @@ class SearchActivity : AppCompatActivity() {
                     historyContainer.visibility = View.VISIBLE
                     placeholderNoResults.visibility = View.GONE
                     placeholderError.visibility = View.GONE
+                    historyAdapter.updateData(state.history)
                 }
                 is SearchState.Empty -> {
                     progressBar.visibility = View.GONE
@@ -202,9 +203,7 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.searchHistory.observe(this) { history ->
-            historyAdapter.updateData(history)
-        }
+
     }
 
     private fun openPlayerActivity(track: Track) {

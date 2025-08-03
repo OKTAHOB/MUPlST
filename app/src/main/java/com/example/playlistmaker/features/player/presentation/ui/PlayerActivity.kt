@@ -10,7 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
-import com.example.playlistmaker.features.player.presentation.viewmodel.PlayerState
+import com.example.playlistmaker.features.player.presentation.viewmodel.PlaybackState
 import com.example.playlistmaker.features.player.presentation.viewmodel.PlayerViewModel
 import com.example.playlistmaker.features.player.presentation.viewmodel.PlayerViewModelFactory
 import com.example.playlistmaker.features.search.domain.model.Track
@@ -51,9 +51,11 @@ class PlayerActivity : AppCompatActivity() {
         playButton = findViewById(R.id.player_btn_play)
         currentTimeTextView = findViewById(R.id.player_current_time)
 
+        val artworkUrl = track.artworkUrl100.replace("100x100", "512x512")
         Glide.with(this)
-            .load(track.artworkUrl100)
+            .load(artworkUrl)
             .placeholder(R.drawable.placeholder)
+            .transform(com.bumptech.glide.load.resource.bitmap.RoundedCorners(8))
             .into(findViewById(R.id.player_art))
 
         findViewById<TextView>(R.id.player_track_name).text = track.trackName
@@ -84,31 +86,34 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.playerState.observe(this) { state ->
-            when (state) {
-                is PlayerState.TrackLoaded -> {
+            when (state.playbackState) {
+                PlaybackState.TRACK_LOADED -> {
                     // Track is loaded, UI is already set up
                 }
-                is PlayerState.Prepared -> {
+
+                PlaybackState.PREPARED -> {
                     playButton.isEnabled = true
                     playButton.setImageResource(R.drawable.btn_play)
                 }
-                is PlayerState.Playing -> {
+
+                PlaybackState.PLAYING -> {
                     playButton.setImageResource(R.drawable.btn_pause)
                     startTimeUpdater()
                 }
-                is PlayerState.Paused -> {
+
+                PlaybackState.PAUSED -> {
                     playButton.setImageResource(R.drawable.btn_play)
                     stopTimeUpdater()
                 }
-                is PlayerState.Completed -> {
+
+                PlaybackState.COMPLETED -> {
                     playButton.setImageResource(R.drawable.btn_play)
                     stopTimeUpdater()
                 }
             }
-        }
 
-        viewModel.currentTime.observe(this) { time ->
-            currentTimeTextView.text = time
+
+            currentTimeTextView.text = state.currentTime
         }
     }
 

@@ -2,23 +2,23 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.data.preferences.SettingsRepositoryImpl
+import com.example.playlistmaker.presentation.util.Creator
 
 class App : Application() {
-    private lateinit var settingsRepository: SettingsRepositoryImpl
+    private lateinit var getThemeSettingsUseCase: com.example.playlistmaker.features.settings.domain.usecase.GetThemeSettingsUseCase
+    private lateinit var saveThemeSettingsUseCase: com.example.playlistmaker.features.settings.domain.usecase.SaveThemeSettingsUseCase
 
     override fun onCreate() {
         super.onCreate()
-        settingsRepository = SettingsRepositoryImpl(
-            getSharedPreferences("settings", MODE_PRIVATE)
-        )
-        val darkTheme = settingsRepository.getThemeSettings()
+        getThemeSettingsUseCase = Creator.provideGetThemeSettingsUseCase(this)
+        saveThemeSettingsUseCase = Creator.provideSaveThemeSettingsUseCase(this)
+
+        val darkTheme = getThemeSettingsUseCase.execute()
         applyTheme(darkTheme)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
-        settingsRepository.saveThemeSettings(darkThemeEnabled)
-        applyTheme(darkThemeEnabled)
+        saveThemeSettingsUseCase.execute(darkThemeEnabled)
     }
 
     private fun applyTheme(darkTheme: Boolean) {

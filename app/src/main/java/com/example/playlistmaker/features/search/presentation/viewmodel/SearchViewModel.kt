@@ -15,9 +15,6 @@ class SearchViewModel(
     private val _searchState = MutableLiveData<SearchState>()
     val searchState: LiveData<SearchState> = _searchState
 
-    private val _searchHistory = MutableLiveData<List<Track>>()
-    val searchHistory: LiveData<List<Track>> = _searchHistory
-
     private var currentSearchQuery = ""
 
     init {
@@ -49,9 +46,8 @@ class SearchViewModel(
 
     fun loadSearchHistory() {
         val history = searchTracksUseCase.getSearchHistory()
-        _searchHistory.value = history
         if (history.isNotEmpty()) {
-            _searchState.value = SearchState.ShowHistory
+            _searchState.value = SearchState.ShowHistory(history)
         } else {
             _searchState.value = SearchState.Empty
         }
@@ -78,6 +74,6 @@ sealed class SearchState {
     data class Success(val tracks: List<Track>) : SearchState()
     object NoResults : SearchState()
     object Error : SearchState()
-    object ShowHistory : SearchState()
+    data class ShowHistory(val history: List<Track>) : SearchState()
     object Empty : SearchState()
 } 

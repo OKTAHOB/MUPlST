@@ -14,7 +14,9 @@ class SearchViewModelFactory(private val context: Context) : ViewModelProvider.F
         if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
             val trackMapper = TrackMapper()
             val trackRepository = TrackRepositoryImpl(trackMapper)
-            val searchHistoryRepository = SearchHistoryRepositoryImpl(context)
+            val searchHistoryRepository = SearchHistoryRepositoryImpl(
+                context.getSharedPreferences("search_history", Context.MODE_PRIVATE)
+            )
             val searchTracksUseCase = SearchTracksUseCase(trackRepository, searchHistoryRepository)
             
             @Suppress("UNCHECKED_CAST")

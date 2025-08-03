@@ -10,7 +10,9 @@ class SettingsViewModelFactory(private val context: Context) : ViewModelProvider
     
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
-            val settingsRepository = SettingsRepositoryImpl(context)
+            val settingsRepository = SettingsRepositoryImpl(
+                context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+            )
             val settingsUseCase = SettingsUseCase(settingsRepository)
             
             @Suppress("UNCHECKED_CAST")

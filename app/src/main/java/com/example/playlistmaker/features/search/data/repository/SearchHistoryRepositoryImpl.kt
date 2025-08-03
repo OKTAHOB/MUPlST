@@ -1,14 +1,14 @@
 package com.example.playlistmaker.features.search.data.repository
 
-import android.content.Context
 import android.content.SharedPreferences
 import com.example.playlistmaker.features.search.domain.model.Track
 import com.example.playlistmaker.features.search.domain.repository.SearchHistoryRepository
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistoryRepositoryImpl(context: Context) : SearchHistoryRepository {
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("search_history", Context.MODE_PRIVATE)
+class SearchHistoryRepositoryImpl(
+    private val sharedPreferences: SharedPreferences
+) : SearchHistoryRepository {
     private val gson = Gson()
     private val type = object : TypeToken<List<Track>>() {}.type
 
