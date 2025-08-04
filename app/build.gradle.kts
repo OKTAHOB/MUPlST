@@ -45,7 +45,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    
+
+    // Koin dependencies
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+
     // MVVM dependencies
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
