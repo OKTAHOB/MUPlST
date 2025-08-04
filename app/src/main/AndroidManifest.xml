@@ -14,20 +14,17 @@
         android:theme="@style/Base.Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.activity.SearchActivity"
+            android:name=".features.search.presentation.ui.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.activity.LibraryActivity"
-            android:exported="false" />
+            android:name=".features.player.presentation.ui.PlayerActivity"
+            android:exported="false"/>
         <activity
-            android:name=".presentation.activity.SettingsActivity"
+            android:name=".features.settings.presentation.ui.SettingsActivity"
             android:theme="@style/Theme.PlaylistMaker.Settings"
             android:exported="false" />
         <activity
-            android:name=".presentation.activity.PlayerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".presentation.activity.MainActivity"
+            android:name=".features.main.presentation.ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PlaylistMaker.MainActivity" >
             <intent-filter>
