@@ -8,45 +8,47 @@ import com.example.playlistmaker.features.search.data.repository.SearchHistoryRe
 import com.example.playlistmaker.features.search.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.features.search.domain.repository.SearchHistoryRepository
 import com.example.playlistmaker.features.search.domain.repository.TrackRepository
-import com.example.playlistmaker.features.player.data.repository.PlayerRepositoryImpl
-import com.example.playlistmaker.features.player.domain.repository.PlayerRepository
-import com.example.playlistmaker.features.settings.data.repository.SettingsRepositoryImpl
-import com.example.playlistmaker.features.settings.domain.repository.SettingsRepository
+import com.example.playlistmaker.features.search.domain.usecase.SearchTracksUseCase
+import com.example.playlistmaker.features.search.presentation.viewmodel.SearchViewModel
+import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-val dataModule = module {
+val searchModule = module {
 
-    // Network
     single { RetrofitClient.musicApiService }
 
-    // Mappers
     single { TrackMapper() }
 
-    // SharedPreferences
     single<SharedPreferences>(qualifier = named("search_history_prefs")) {
         androidContext().getSharedPreferences("search_history", Context.MODE_PRIVATE)
     }
 
-    single<SharedPreferences>(qualifier = named("settings_prefs")) {
-        androidContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-    }
+    single { Gson() }
 
-    // Repositories
     single<TrackRepository> {
         TrackRepositoryImpl(get())
     }
 
     single<SearchHistoryRepository> {
-        SearchHistoryRepositoryImpl(get(qualifier = named("search_history_prefs")))
+        SearchHistoryRepositoryImpl(
+            sharedPreferences = get(qualifier = named("search_history_prefs")),
+            gson = get()
+        )
     }
 
-    single<PlayerRepository> {
-        PlayerRepositoryImpl()
+    single {
+        SearchTracksUseCase(
+            trackRepository = get(),
+            searchHistoryRepository = get()
+        )
     }
 
-    single<SettingsRepository> {
-        SettingsRepositoryImpl(get(qualifier = named("settings_prefs")))
+    viewModel {
+        SearchViewModel(
+            searchTracksUseCase = get()
+        )
     }
 }

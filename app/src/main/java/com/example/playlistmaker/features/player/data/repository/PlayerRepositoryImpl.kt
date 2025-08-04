@@ -3,11 +3,12 @@ package com.example.playlistmaker.features.player.data.repository
 import android.media.MediaPlayer
 import com.example.playlistmaker.features.player.domain.repository.PlayerRepository
 
-class PlayerRepositoryImpl : PlayerRepository {
-    private var mediaPlayer: MediaPlayer? = null
+class PlayerRepositoryImpl(
+    private val mediaPlayer: MediaPlayer
+) : PlayerRepository {
 
     override fun preparePlayer(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
-        mediaPlayer = MediaPlayer().apply {
+        mediaPlayer.apply {
             setDataSource(url)
             setOnPreparedListener { onPrepared() }
             setOnCompletionListener { onCompletion() }
@@ -16,19 +17,18 @@ class PlayerRepositoryImpl : PlayerRepository {
     }
 
     override fun startPlayer() {
-        mediaPlayer?.start()
+        mediaPlayer.start()
     }
 
     override fun pausePlayer() {
-        mediaPlayer?.pause()
+        mediaPlayer.pause()
     }
 
     override fun getCurrentPosition(): Int {
-        return mediaPlayer?.currentPosition ?: 0
+        return mediaPlayer.currentPosition
     }
 
     override fun releasePlayer() {
-        mediaPlayer?.release()
-        mediaPlayer = null
+        mediaPlayer.release()
     }
-} 
+}
