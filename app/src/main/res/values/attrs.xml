@@ -9,5 +9,6 @@
     <attr name="gray_or_black" format="color"/>
     <attr name="gray_or_white" format="color"/>
     <attr name="black_or_white" format="color"/>
+    <attr name="tblack_or_white" format="color"/>
     <attr name="white_or_black" format="color"/>
 </resources>
