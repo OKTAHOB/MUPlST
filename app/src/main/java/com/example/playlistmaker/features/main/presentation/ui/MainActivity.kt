@@ -31,8 +31,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.media_btn).setOnClickListener {
-            // Пока оставляем пустым, так как LibraryActivity не реализована
-        }
+            startActivity(Intent(this, com.example.playlistmaker.features.media.presentation.ui.MediaLibraryActivity::class.java))        }
 
         findViewById<Button>(R.id.set_btn).setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))

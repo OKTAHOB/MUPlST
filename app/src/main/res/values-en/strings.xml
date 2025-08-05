@@ -8,6 +8,11 @@
     <string name="share">Share app</string>
     <string name="help">Write us</string>
     <string name="user_agr">User agreement</string>
+    <string name="tab_playlists">Playlists</string>
+    <string name="tab_favorites">Liked tracks</string>
+    <string name="no_playlists">You not create playlist still</string>
+    <string name="media_is_empty">Media is empty</string>
+    <string name="new_playlist">New playlist</string>
 
     <string name="share_via">Share via...</string>
 

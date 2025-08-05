@@ -8,6 +8,7 @@
         <item name="gray_or_black">@color/yp_black</item>
         <item name="gray_or_white">@color/yp_white</item>
         <item name="black_or_white">@color/yp_white</item>
+        <item name="tblack_or_white">@color/yp_white</item>
         <item name="white_or_black">@color/yp_black</item>
     </style>
 
