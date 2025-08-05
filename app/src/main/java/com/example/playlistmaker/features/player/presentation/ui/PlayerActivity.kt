@@ -6,14 +6,13 @@ import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.features.player.presentation.viewmodel.PlaybackState
 import com.example.playlistmaker.features.player.presentation.viewmodel.PlayerViewModel
-import com.example.playlistmaker.features.player.presentation.viewmodel.PlayerViewModelFactory
 import com.example.playlistmaker.features.search.domain.model.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.google.gson.Gson
 
 class PlayerActivity : AppCompatActivity() {
@@ -22,7 +21,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var currentTimeTextView: TextView
     private lateinit var track: Track
 
-    private val viewModel: PlayerViewModel by viewModels { PlayerViewModelFactory() }
+    private val viewModel: PlayerViewModel by viewModel ()
     private val handler = Handler(Looper.getMainLooper())
     private val updateTimeRunnable = object : Runnable {
         override fun run() {

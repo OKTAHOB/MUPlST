@@ -16,7 +16,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,9 +25,10 @@ import com.example.playlistmaker.features.search.domain.model.Track
 import com.example.playlistmaker.features.search.presentation.adapter.SearchAdapter
 import com.example.playlistmaker.features.search.presentation.viewmodel.SearchState
 import com.example.playlistmaker.features.search.presentation.viewmodel.SearchViewModel
-import com.example.playlistmaker.features.search.presentation.viewmodel.SearchViewModelFactory
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -46,7 +46,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyContainer: LinearLayout
     private lateinit var progressBar: ProgressBar
 
-    private val viewModel: SearchViewModel by viewModels { SearchViewModelFactory(this) }
+    private val viewModel: SearchViewModel by viewModel()
     private val handler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable? = null
     private var currentDebounceText = ""

@@ -3,18 +3,17 @@ package com.example.playlistmaker.features.settings.presentation.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.R
 import com.example.playlistmaker.features.settings.presentation.viewmodel.SettingsViewModel
-import com.example.playlistmaker.features.settings.presentation.viewmodel.SettingsViewModelFactory
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
-    private val viewModel: SettingsViewModel by viewModels { SettingsViewModelFactory(this) }
+    private val viewModel: SettingsViewModel by viewModel ()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

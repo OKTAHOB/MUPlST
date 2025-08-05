@@ -2,23 +2,34 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.presentation.util.Creator
+import com.example.playlistmaker.di.appModule
+import com.example.playlistmaker.features.settings.domain.usecase.SettingsUseCase
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class App : Application() {
-    private lateinit var getThemeSettingsUseCase: com.example.playlistmaker.features.settings.domain.usecase.GetThemeSettingsUseCase
-    private lateinit var saveThemeSettingsUseCase: com.example.playlistmaker.features.settings.domain.usecase.SaveThemeSettingsUseCase
+class App : Application(), KoinComponent {
+
+    private val settingsUseCase: SettingsUseCase by inject()
 
     override fun onCreate() {
         super.onCreate()
-        getThemeSettingsUseCase = Creator.provideGetThemeSettingsUseCase(this)
-        saveThemeSettingsUseCase = Creator.provideSaveThemeSettingsUseCase(this)
 
-        val darkTheme = getThemeSettingsUseCase.execute()
+        startKoin {
+            androidLogger()
+            androidContext(this@App)
+            modules(appModule)
+        }
+
+        val darkTheme = settingsUseCase.getThemeSettings()
         applyTheme(darkTheme)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
-        saveThemeSettingsUseCase.execute(darkThemeEnabled)
+        settingsUseCase.saveThemeSettings(darkThemeEnabled)
+        settingsUseCase.applyTheme(darkThemeEnabled)
     }
 
     private fun applyTheme(darkTheme: Boolean) {
