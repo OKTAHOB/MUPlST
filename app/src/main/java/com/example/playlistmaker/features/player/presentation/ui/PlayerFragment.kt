@@ -3,25 +3,28 @@ package com.example.playlistmaker.features.player.presentation.ui
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.features.player.presentation.viewmodel.PlaybackState
 import com.example.playlistmaker.features.player.presentation.viewmodel.PlayerViewModel
 import com.example.playlistmaker.features.search.domain.model.Track
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerFragment : Fragment() {
 
     private lateinit var playButton: ImageView
     private lateinit var currentTimeTextView: TextView
     private lateinit var track: Track
 
-    private val viewModel: PlayerViewModel by viewModel ()
+    private val viewModel: PlayerViewModel by viewModel()
     private val handler = Handler(Looper.getMainLooper())
     private val updateTimeRunnable = object : Runnable {
         override fun run() {
@@ -32,50 +35,71 @@ class PlayerActivity : AppCompatActivity() {
 
     companion object {
         private const val UPDATE_TIME_DELAY = 300L
+        private const val TRACK_JSON_KEY = "track_json"
+        
+        fun newInstance(trackJson: String): PlayerFragment {
+            return PlayerFragment().apply {
+                arguments = Bundle().apply {
+                    putString(TRACK_JSON_KEY, trackJson)
+                }
+            }
+        }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_player, container, false)
+    }
 
-        track = Gson().fromJson(intent.getStringExtra("TRACK_JSON"), Track::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        initViews()
-        setupBackButton()
-        observeViewModel()
-        viewModel.setTrack(track)
+        val trackJson = arguments?.getString(TRACK_JSON_KEY)
+            ?: arguments?.getString("trackJson")
+            ?: ""
+
+        if (trackJson.isNotEmpty()) {
+            track = Gson().fromJson(trackJson, Track::class.java)
+            initViews()
+            setupBackButton()
+            observeViewModel()
+            viewModel.setTrack(track)
+        }
     }
 
     private fun initViews() {
-        playButton = findViewById(R.id.player_btn_play)
-        currentTimeTextView = findViewById(R.id.player_current_time)
+        playButton = requireView().findViewById(R.id.player_btn_play)
+        currentTimeTextView = requireView().findViewById(R.id.player_current_time)
 
         val artworkUrl = track.artworkUrl100.replace("100x100", "512x512")
         Glide.with(this)
             .load(artworkUrl)
             .placeholder(R.drawable.placeholder)
             .transform(com.bumptech.glide.load.resource.bitmap.RoundedCorners(8))
-            .into(findViewById(R.id.player_art))
+            .into(requireView().findViewById(R.id.player_art))
 
-        findViewById<TextView>(R.id.player_track_name).text = track.trackName
-        findViewById<TextView>(R.id.player_track_artist).text = track.artistName
+        requireView().findViewById<TextView>(R.id.player_track_name).text = track.trackName
+        requireView().findViewById<TextView>(R.id.player_track_artist).text = track.artistName
 
         track.collectionName?.takeIf { it.isNotEmpty() }?.let {
-            findViewById<TextView>(R.id.player_track_album_value).text = it
+            requireView().findViewById<TextView>(R.id.player_track_album_value).text = it
         } ?: run {
-            findViewById<TextView>(R.id.player_track_album_title).visibility = View.GONE
-            findViewById<TextView>(R.id.player_track_album_value).visibility = View.GONE
+            requireView().findViewById<TextView>(R.id.player_track_album_title).visibility = View.GONE
+            requireView().findViewById<TextView>(R.id.player_track_album_value).visibility = View.GONE
         }
 
         val year = track.releaseDate.split("-").firstOrNull() ?: track.releaseDate
-        findViewById<TextView>(R.id.player_track_year_value).text = year
+        requireView().findViewById<TextView>(R.id.player_track_year_value).text = year
 
-        findViewById<TextView>(R.id.player_track_genre_value).text = track.primaryGenreName
-        findViewById<TextView>(R.id.player_track_country_value).text = track.country
+        requireView().findViewById<TextView>(R.id.player_track_genre_value).text = track.primaryGenreName
+        requireView().findViewById<TextView>(R.id.player_track_country_value).text = track.country
 
         val minutes = track.trackTime / 60000
         val seconds = (track.trackTime % 60000) / 1000
-        findViewById<TextView>(R.id.player_track_time_value).text =
+        requireView().findViewById<TextView>(R.id.player_track_time_value).text =
             String.format("%02d:%02d", minutes, seconds)
 
         playButton.setOnClickListener {
@@ -84,7 +108,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.playerState.observe(this) { state ->
+        viewModel.playerState.observe(viewLifecycleOwner) { state ->
             when (state.playbackState) {
                 PlaybackState.TRACK_LOADED -> {
                     // Track is loaded, UI is already set up
@@ -111,7 +135,6 @@ class PlayerActivity : AppCompatActivity() {
                 }
             }
 
-
             currentTimeTextView.text = state.currentTime
         }
     }
@@ -125,8 +148,8 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun setupBackButton() {
-        findViewById<ImageView>(R.id.player_back).setOnClickListener {
-            finish()
+        requireView().findViewById<ImageView>(R.id.player_back).setOnClickListener {
+            findNavController().navigateUp()
         }
     }
 
@@ -135,8 +158,8 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.pausePlayer()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         stopTimeUpdater()
     }
 } 

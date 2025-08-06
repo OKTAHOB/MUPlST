@@ -5,24 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/mback"
-    android:orientation="vertical"
+    android:orientation="vertical">
 
-    >
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/settings_appbar"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolBarMediateka"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/header_size"
-        app:title="@string/settings"
-        app:titleTextAppearance="@style/PerefToolbarTitleTextStyle"
-        app:titleTextColor="?attr/text_swp_color"
-        app:titleMarginStart="16dp"
-        app:titleMarginTop="14dp"
-        style="@style/TopBar"
-        app:navigationIcon="@drawable/arrow"
-        app:navigationIconTint="?attr/icons_swp_color"
-        />
-
+        android:layout_height="@dimen/primary_indent_62"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/search" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/settings_switch"
@@ -31,10 +23,9 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:text="@string/dk_theme"
-        app:thumbTint="@color/thumb_color"
-        app:trackTint="@color/track_color"
 
-        />
+        app:thumbTint="@color/thumb_color"
+        app:trackTint="@color/track_color" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/btn_share"
@@ -42,9 +33,7 @@
         android:layout_height="wrap_content"
         style="@style/MaterialTextViewStyle"
         android:drawableEnd="@drawable/share"
-
-        android:text="@string/share"
-         />
+        android:text="@string/share" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/btn_contact_support"
@@ -52,15 +41,14 @@
         android:layout_height="wrap_content"
         style="@style/MaterialTextViewStyle"
         android:drawableEnd="@drawable/help"
-        android:text="@string/help"
-         />
+        android:text="@string/help" />
+        
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/btn_terms_of_use"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/MaterialTextViewStyle"
         android:drawableEnd="@drawable/arl"
-        android:text="@string/user_agr"
-        />
+        android:text="@string/user_agr" />
 
-</LinearLayout>
+</LinearLayout> 

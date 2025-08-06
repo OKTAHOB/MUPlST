@@ -3,53 +3,55 @@ package com.example.playlistmaker.features.settings.presentation.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
 import com.example.playlistmaker.features.settings.presentation.viewmodel.SettingsViewModel
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : Fragment() {
 
-    private val viewModel: SettingsViewModel by viewModel ()
+    private val viewModel: SettingsViewModel by viewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_settings, container, false)
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
         setupViews()
         observeViewModel()
     }
 
     private fun setupViews() {
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.settings_switch)
+        val themeSwitcher = requireView().findViewById<SwitchMaterial>(R.id.settings_switch)
         
         themeSwitcher.setOnCheckedChangeListener { _, checked ->
             viewModel.updateThemeSettings(checked)
         }
 
-        setupToolbar()
         setupShareButton()
         setupSupportButton()
         setupTermsButton()
     }
 
     private fun observeViewModel() {
-        viewModel.themeSettings.observe(this) { isDarkTheme ->
-            findViewById<SwitchMaterial>(R.id.settings_switch).isChecked = isDarkTheme
-        }
-    }
-
-    private fun setupToolbar() {
-        findViewById<MaterialToolbar>(R.id.settings_appbar).setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+        viewModel.themeSettings.observe(viewLifecycleOwner) { isDarkTheme ->
+            requireView().findViewById<SwitchMaterial>(R.id.settings_switch).isChecked = isDarkTheme
         }
     }
 
     private fun setupShareButton() {
-        findViewById<MaterialTextView>(R.id.btn_share).setOnClickListener {
+        requireView().findViewById<MaterialTextView>(R.id.btn_share).setOnClickListener {
             val shareText = getString(R.string.course_url)
             Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
@@ -61,7 +63,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupSupportButton() {
-        findViewById<MaterialTextView>(R.id.btn_contact_support).setOnClickListener {
+        requireView().findViewById<MaterialTextView>(R.id.btn_contact_support).setOnClickListener {
             Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.sup_mail)))
@@ -74,7 +76,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupTermsButton() {
-        findViewById<MaterialTextView>(R.id.btn_terms_of_use).setOnClickListener {
+        requireView().findViewById<MaterialTextView>(R.id.btn_terms_of_use).setOnClickListener {
             startActivity(
                 Intent(
                     Intent.ACTION_VIEW,

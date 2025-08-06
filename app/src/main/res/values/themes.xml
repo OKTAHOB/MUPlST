@@ -8,19 +8,20 @@
         <item name="black_or_white">@color/yp_black</item>
         <item name="tblack_or_white">@color/black</item>
         <item name="white_or_black">@color/yp_white</item>
+        <item name="text_swp_color">@color/yp_black</item>
+        <item name="icons_swp_color">@color/yp_gray</item>
     </style>
 
 
     <style name="Theme.PlaylistMaker.MainActivity" parent="Base.Theme.PlaylistMaker">
-        <item name="mback">@color/yp_blue</item>
+        <item name="mback">@color/yp_white</item>
     </style>
     <style name="Theme.PlaylistMaker.Search" parent="Base.Theme.PlaylistMaker">
 
     </style>
 
     <style name="Theme.PlaylistMaker.Settings" parent="Base.Theme.PlaylistMaker">
-        <item name="text_swp_color">@color/yp_black</item>
-        <item name="icons_swp_color">@color/yp_gray</item>
+
         <item name="mthumb">@color/yp_gray</item>
         <item name="mtrack">@color/yp_gray_light</item>
 

@@ -115,7 +115,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/btn_add"
-
                 app:layout_constraintStart_toStartOf="@id/player_btn_add_to_list"
                 app:layout_constraintEnd_toEndOf="@id/player_btn_add_to_list"
                 app:layout_constraintTop_toTopOf="@id/player_btn_add_to_list"
@@ -143,7 +142,6 @@
 
             <ImageView
                 android:id="@+id/player_btn_like"
-
                 android:layout_width="0dp"
                 android:layout_marginEnd="8dp"
                 android:layout_height="wrap_content"
@@ -267,6 +265,4 @@
 
     </ScrollView>
 
-
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout> 
