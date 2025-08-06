@@ -8,6 +8,8 @@
         <item name="black_or_white">@color/yp_white</item>
         <item name="tblack_or_white">@color/yp_white</item>
         <item name="white_or_black">@color/yp_black</item>
+        <item name="text_swp_color" state_checked="true" >@color/yp_white</item>
+        <item name="icons_swp_color">@color/yp_white</item>
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
@@ -22,8 +24,7 @@
     </style>
 
     <style name="Theme.PlaylistMaker.Settings" parent="Base.Theme.PlaylistMaker">
-        <item name="text_swp_color" state_checked="true" >@color/yp_white</item>
-        <item name="icons_swp_color">@color/yp_white</item>
+
 
         <item name="mthumb" >@color/yp_blue </item>
         <item name="mtrack">@color/yp_blue_light</item>
