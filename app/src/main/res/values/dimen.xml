@@ -12,6 +12,7 @@
     <dimen name="header_size">56dp</dimen>
     <dimen name="std_padding">16dp</dimen>
     <dimen name="padd_R_6dp">6dp</dimen>
+    <dimen name = "primary_indent_62"> 62dp</dimen>
 
     <dimen name="margin_music_start">8dp</dimen>
     <dimen name="margin_music_end">12dp</dimen>

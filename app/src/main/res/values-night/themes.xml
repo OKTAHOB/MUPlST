@@ -1,8 +1,6 @@
 <resources>
-    <!-- Base application theme. -->
 
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-
         <item name="mback">@color/yp_black</item>
         <item name="grayL_or_white">@color/yp_white</item>
         <item name="gray_or_black">@color/yp_black</item>
