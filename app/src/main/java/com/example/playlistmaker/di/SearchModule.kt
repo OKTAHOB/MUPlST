@@ -29,7 +29,10 @@ val searchModule = module {
     single { Gson() }
 
     single<TrackRepository> {
-        TrackRepositoryImpl(get())
+        TrackRepositoryImpl(
+            apiService = get(),
+            trackMapper = get()
+        )
     }
 
     single<SearchHistoryRepository> {

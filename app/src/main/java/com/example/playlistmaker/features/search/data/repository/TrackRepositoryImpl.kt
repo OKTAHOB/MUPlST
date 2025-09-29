@@ -1,22 +1,21 @@
 package com.example.playlistmaker.features.search.data.repository
 
-import com.example.playlistmaker.features.search.data.dto.SearchResponse
 import com.example.playlistmaker.features.search.data.mapper.TrackMapper
-import com.example.playlistmaker.features.search.data.network.RetrofitClient
+import com.example.playlistmaker.features.search.data.network.ApiService
 import com.example.playlistmaker.features.search.domain.model.Track
 import com.example.playlistmaker.features.search.domain.repository.TrackRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
-class TrackRepositoryImpl(private val trackMapper: TrackMapper) : TrackRepository {
-    override suspend fun searchTracks(expression: String): List<Track> = withContext(Dispatchers.IO) {
-        try {
-            val response: SearchResponse = RetrofitClient.musicApiService.search(expression)
-            response.results.map { trackDto ->
-                trackMapper.map(trackDto)
-            }
-        } catch (e: Exception) {
-            emptyList()
-        }
-    }
-} 
+class TrackRepositoryImpl(
+    private val apiService: ApiService,
+    private val trackMapper: TrackMapper
+) : TrackRepository {
+    override fun searchTracks(expression: String): Flow<List<Track>> =
+        flow {
+            val response = apiService.search(expression)
+            emit(response.results.map { trackDto -> trackMapper.map(trackDto) })
+        }.flowOn(Dispatchers.IO)
+}
