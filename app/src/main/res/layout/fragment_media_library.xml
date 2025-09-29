@@ -6,17 +6,16 @@
     android:layout_height="match_parent"
     android:background="?attr/white_or_black"
     android:orientation="vertical"
-    tools:context="com.example.playlistmaker.features.media.presentation.ui.MediaLibraryActivity">
+    tools:context="com.example.playlistmaker.features.media.presentation.ui.MediaLibraryFragment">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/backImageView"
-        style="@style/ToolbarTitleTextStyle"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolBarMediateka"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:navigationIcon="@drawable/arrow"
-        app:navigationIconTint="?attr/black_or_white"
+        android:layout_height="@dimen/primary_indent_62"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:title="@string/media" />
-
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
@@ -30,4 +29,4 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-</LinearLayout>
+</LinearLayout> 
