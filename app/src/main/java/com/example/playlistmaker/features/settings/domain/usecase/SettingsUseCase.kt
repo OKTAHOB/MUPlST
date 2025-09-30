@@ -16,4 +16,5 @@ class SettingsUseCase(
     fun applyTheme(darkThemeEnabled: Boolean) {
         settingsRepository.applyTheme(darkThemeEnabled)
     }
-} 
+}
+

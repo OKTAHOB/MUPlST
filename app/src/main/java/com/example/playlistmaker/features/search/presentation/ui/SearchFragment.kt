@@ -2,8 +2,6 @@ package com.example.playlistmaker.features.search.presentation.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -18,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +27,9 @@ import com.example.playlistmaker.features.search.presentation.viewmodel.SearchSt
 import com.example.playlistmaker.features.search.presentation.viewmodel.SearchViewModel
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchFragment : Fragment() {
 
@@ -46,13 +48,13 @@ class SearchFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
 
     private val viewModel: SearchViewModel by viewModel()
-    private val handler = Handler(Looper.getMainLooper())
-    private var searchRunnable: Runnable? = null
-    private var currentDebounceText = ""
+    private var searchJob: Job? = null
+    private var trackClickJob: Job? = null
 
     companion object {
         private const val SEARCH_QUERY_KEY = "search_query"
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val TRACK_CLICK_DEBOUNCE_DELAY = 300L
     }
 
     override fun onCreateView(
@@ -65,12 +67,12 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         setupViews()
         setupRecyclerView()
         setupListeners()
         observeViewModel()
-        
+
         // Restore saved state
         val savedQuery = savedInstanceState?.getString(SEARCH_QUERY_KEY, "")
         if (!savedQuery.isNullOrEmpty()) {
@@ -93,17 +95,11 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        historyAdapter = SearchAdapter(emptyList()) { track ->
-            viewModel.addTrackToHistory(track)
-            openPlayerFragment(track)
-        }
+        historyAdapter = SearchAdapter(emptyList(), ::handleTrackClick)
         historyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         historyRecyclerView.adapter = historyAdapter
 
-        searchAdapter = SearchAdapter(emptyList()) { track ->
-            viewModel.addTrackToHistory(track)
-            openPlayerFragment(track)
-        }
+        searchAdapter = SearchAdapter(emptyList(), ::handleTrackClick)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = searchAdapter
     }
@@ -111,23 +107,25 @@ class SearchFragment : Fragment() {
     private fun setupListeners() {
         inputEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (s.isNullOrEmpty()) {
+                val text = s?.toString().orEmpty()
+                clearIcon.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
+
+                if (text.isEmpty()) {
+                    cancelSearchJob()
                     viewModel.loadSearchHistory()
                 } else {
-                    currentDebounceText = s.toString()
-                    handler.removeCallbacksAndMessages(null)
-                    searchRunnable = Runnable { viewModel.searchTracks(currentDebounceText) }
-                    handler.postDelayed(searchRunnable!!, SEARCH_DEBOUNCE_DELAY)
+                    startSearchDebounce(text)
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                cancelSearchJob()
                 viewModel.searchTracks(inputEditText.text.toString().trim())
-                handler.removeCallbacksAndMessages(null)
                 true
             } else {
                 false
@@ -135,20 +133,12 @@ class SearchFragment : Fragment() {
         }
 
         retryButton.setOnClickListener {
-            handler.removeCallbacksAndMessages(null)
+            cancelSearchJob()
             viewModel.retrySearch()
         }
 
-        inputEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                clearIcon.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-            }
-        })
-
         clearIcon.setOnClickListener {
-            handler.removeCallbacksAndMessages(null)
+            cancelSearchJob()
             inputEditText.text.clear()
             hideKeyboard()
             viewModel.loadSearchHistory()
@@ -231,6 +221,34 @@ class SearchFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        handler.removeCallbacksAndMessages(null)
+        cancelSearchJob()
+        cancelTrackClickJob()
     }
-} 
+
+    private fun startSearchDebounce(query: String) {
+        cancelSearchJob()
+        searchJob = viewLifecycleOwner.lifecycleScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            viewModel.searchTracks(query)
+        }
+    }
+
+    private fun cancelSearchJob() {
+        searchJob?.cancel()
+        searchJob = null
+    }
+
+    private fun handleTrackClick(track: Track) {
+        cancelTrackClickJob()
+        trackClickJob = viewLifecycleOwner.lifecycleScope.launch {
+            delay(TRACK_CLICK_DEBOUNCE_DELAY)
+            viewModel.addTrackToHistory(track)
+            openPlayerFragment(track)
+        }
+    }
+
+    private fun cancelTrackClickJob() {
+        trackClickJob?.cancel()
+        trackClickJob = null
+    }
+}
