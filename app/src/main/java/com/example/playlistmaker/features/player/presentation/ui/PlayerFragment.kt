@@ -21,6 +21,8 @@ class PlayerFragment : Fragment() {
     private lateinit var playButton: ImageView
     private lateinit var currentTimeTextView: TextView
     private lateinit var track: Track
+    private lateinit var likeButtonContainer: ImageView
+    private lateinit var likeButtonIcon: ImageView
 
     private val viewModel: PlayerViewModel by viewModel()
     companion object {
@@ -62,8 +64,12 @@ class PlayerFragment : Fragment() {
     private fun initViews() {
         playButton = requireView().findViewById(R.id.player_btn_play)
         currentTimeTextView = requireView().findViewById(R.id.player_current_time)
+        likeButtonContainer = requireView().findViewById(R.id.player_btn_like)
+        likeButtonIcon = requireView().findViewById(R.id.player_btn_like_ico)
 
-        val artworkUrl = track.artworkUrl100.replace("100x100", "512x512")
+        val artworkUrl = track.artworkUrl512.ifEmpty {
+            track.artworkUrl100.replace("100x100", "512x512")
+        }
         Glide.with(this)
             .load(artworkUrl)
             .placeholder(R.drawable.placeholder)
@@ -94,6 +100,12 @@ class PlayerFragment : Fragment() {
         playButton.setOnClickListener {
             viewModel.togglePlayback()
         }
+
+        val favoriteClickListener = View.OnClickListener {
+            viewModel.onFavoriteClicked()
+        }
+        likeButtonContainer.setOnClickListener(favoriteClickListener)
+        likeButtonIcon.setOnClickListener(favoriteClickListener)
     }
 
     private fun observeViewModel() {
@@ -122,6 +134,9 @@ class PlayerFragment : Fragment() {
             }
 
             currentTimeTextView.text = state.currentTime
+            likeButtonIcon.setImageResource(
+                if (state.isFavorite) R.drawable.btn_like_filled else R.drawable.btn_like
+            )
         }
     }
 

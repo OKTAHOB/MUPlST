@@ -31,14 +31,16 @@ val searchModule = module {
     single<TrackRepository> {
         TrackRepositoryImpl(
             apiService = get(),
-            trackMapper = get()
+            trackMapper = get(),
+            favoritesDao = get()
         )
     }
 
     single<SearchHistoryRepository> {
         SearchHistoryRepositoryImpl(
             sharedPreferences = get(qualifier = named("search_history_prefs")),
-            gson = get()
+            gson = get(),
+            favoritesDao = get()
         )
     }
 

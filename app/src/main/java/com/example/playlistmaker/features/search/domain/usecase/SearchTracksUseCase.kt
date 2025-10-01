@@ -13,7 +13,7 @@ class SearchTracksUseCase(
         return trackRepository.searchTracks(expression)
     }
 
-    fun getSearchHistory(): List<Track> {
+    suspend fun getSearchHistory(): List<Track> {
         return searchHistoryRepository.getSearchHistory()
     }
 

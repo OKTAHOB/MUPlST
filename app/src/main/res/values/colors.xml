@@ -11,5 +11,6 @@
     <color name="gray">#AEAFB4</color>
     <color name="yp_gray">#FFAEAFB4</color>
     <color name="yp_gray_light">#FFE6E8EB</color>
+    <color name="favorite_active">#F56B6C</color>
 
 </resources>
