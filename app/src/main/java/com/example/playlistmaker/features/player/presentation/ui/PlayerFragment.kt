@@ -1,8 +1,6 @@
 package com.example.playlistmaker.features.player.presentation.ui
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,18 +23,9 @@ class PlayerFragment : Fragment() {
     private lateinit var track: Track
 
     private val viewModel: PlayerViewModel by viewModel()
-    private val handler = Handler(Looper.getMainLooper())
-    private val updateTimeRunnable = object : Runnable {
-        override fun run() {
-            viewModel.updateCurrentTime()
-            handler.postDelayed(this, 300L)
-        }
-    }
-
     companion object {
-        private const val UPDATE_TIME_DELAY = 300L
         private const val TRACK_JSON_KEY = "track_json"
-        
+
         fun newInstance(trackJson: String): PlayerFragment {
             return PlayerFragment().apply {
                 arguments = Bundle().apply {
@@ -121,30 +110,19 @@ class PlayerFragment : Fragment() {
 
                 PlaybackState.PLAYING -> {
                     playButton.setImageResource(R.drawable.btn_pause)
-                    startTimeUpdater()
                 }
 
                 PlaybackState.PAUSED -> {
                     playButton.setImageResource(R.drawable.btn_play)
-                    stopTimeUpdater()
                 }
 
                 PlaybackState.COMPLETED -> {
                     playButton.setImageResource(R.drawable.btn_play)
-                    stopTimeUpdater()
                 }
             }
 
             currentTimeTextView.text = state.currentTime
         }
-    }
-
-    private fun startTimeUpdater() {
-        handler.postDelayed(updateTimeRunnable, UPDATE_TIME_DELAY)
-    }
-
-    private fun stopTimeUpdater() {
-        handler.removeCallbacks(updateTimeRunnable)
     }
 
     private fun setupBackButton() {
@@ -156,10 +134,5 @@ class PlayerFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         viewModel.pausePlayer()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        stopTimeUpdater()
     }
 } 

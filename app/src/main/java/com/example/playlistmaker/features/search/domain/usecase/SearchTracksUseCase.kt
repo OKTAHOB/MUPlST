@@ -3,12 +3,13 @@ package com.example.playlistmaker.features.search.domain.usecase
 import com.example.playlistmaker.features.search.domain.model.Track
 import com.example.playlistmaker.features.search.domain.repository.SearchHistoryRepository
 import com.example.playlistmaker.features.search.domain.repository.TrackRepository
+import kotlinx.coroutines.flow.Flow
 
 class SearchTracksUseCase(
     private val trackRepository: TrackRepository,
     private val searchHistoryRepository: SearchHistoryRepository
 ) {
-    suspend fun execute(expression: String): List<Track> {
+    fun execute(expression: String): Flow<List<Track>> {
         return trackRepository.searchTracks(expression)
     }
 

@@ -9,6 +9,7 @@ class PlayerRepositoryImpl(
 
     override fun preparePlayer(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
         mediaPlayer.apply {
+            reset()
             setDataSource(url)
             setOnPreparedListener { onPrepared() }
             setOnCompletionListener { onCompletion() }
@@ -29,6 +30,8 @@ class PlayerRepositoryImpl(
     }
 
     override fun releasePlayer() {
-        mediaPlayer.release()
+        mediaPlayer.reset()
+        mediaPlayer.setOnPreparedListener(null)
+        mediaPlayer.setOnCompletionListener(null)
     }
 }
