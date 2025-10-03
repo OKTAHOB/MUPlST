@@ -22,6 +22,7 @@
     <string name="confirm_playlist_exit_title">Finish creating playlist?</string>
     <string name="confirm_playlist_exit_message">All unsaved data will be lost</string>
     <string name="playlist_created_message">Playlist %1$s created</string>
+    <string name="add_to_playlist">Add to playlist</string>
     <string name="back">Back</string>
     <string name="playlist_creation_error">Failed to create playlist</string>
     <string name="track_added_to_playlist">Added to playlist %1$s</string>
