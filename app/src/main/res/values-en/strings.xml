@@ -13,6 +13,19 @@
     <string name="no_playlists">You not create playlist still</string>
     <string name="media_is_empty">Media is empty</string>
     <string name="new_playlist">New playlist</string>
+    <string name="playlist_name">Playlist name</string>
+    <string name="playlist_description">Description</string>
+    <string name="playlist_cover">Playlist cover</string>
+    <string name="create">Create</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_finish">Finish</string>
+    <string name="confirm_playlist_exit_title">Finish creating playlist?</string>
+    <string name="confirm_playlist_exit_message">All unsaved data will be lost</string>
+    <string name="playlist_created_message">Playlist %1$s created</string>
+    <string name="back">Back</string>
+    <string name="playlist_creation_error">Failed to create playlist</string>
+    <string name="track_added_to_playlist">Added to playlist %1$s</string>
+    <string name="track_already_in_playlist">Track already added to playlist %1$s</string>
 
     <string name="share_via">Share via...</string>
 

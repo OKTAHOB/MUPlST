@@ -13,4 +13,6 @@ val dataModule = module {
     }
 
     single { get<AppDatabase>().favoritesDao() }
+    single { get<AppDatabase>().playlistsDao() }
+    single { get<AppDatabase>().playlistTracksDao() }
 }

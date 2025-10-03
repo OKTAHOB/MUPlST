@@ -26,7 +26,11 @@ class RootActivity : AppCompatActivity() {
         
         // Hide bottom navigation on player screen
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            bottomNav.visibility = if (destination.id == R.id.playerFragment) {
+            val hideBottomNavigationDestinations = setOf(
+                R.id.playerFragment,
+                R.id.createPlaylistFragment
+            )
+            bottomNav.visibility = if (destination.id in hideBottomNavigationDestinations) {
                 android.view.View.GONE
             } else {
                 android.view.View.VISIBLE
