@@ -5,14 +5,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.features.search.domain.model.Track
+import com.example.playlistmaker.features.media.domain.interactor.FavoritesInteractor
 import com.example.playlistmaker.features.player.domain.usecase.PlayerInteractor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 class PlayerViewModel(
-    private val playerInteractor: PlayerInteractor
+    private val playerInteractor: PlayerInteractor,
+    private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
     private val _playerState = MutableLiveData<PlayerState>()
@@ -21,6 +27,7 @@ class PlayerViewModel(
     private var isPlaying = false
     private var currentTrack: Track? = null
     private var progressJob: Job? = null
+    private var favoriteJob: Job? = null
 
     companion object {
         private const val PROGRESS_UPDATE_INTERVAL = 300L
@@ -31,9 +38,11 @@ class PlayerViewModel(
         _playerState.value = PlayerState(
             track = track,
             playbackState = PlaybackState.TRACK_LOADED,
-            currentTime = "00:00"
+            currentTime = "00:00",
+            isFavorite = track.isFavorite
         )
         preparePlayer()
+        observeFavoriteState(track.trackId)
     }
 
     private fun preparePlayer() {
@@ -110,10 +119,46 @@ class PlayerViewModel(
         }
     }
 
+    fun onFavoriteClicked() {
+        val track = currentTrack ?: return
+        val newState = !track.isFavorite
+        viewModelScope.launch(Dispatchers.IO) {
+            if (newState) {
+                favoritesInteractor.addToFavorites(track)
+            } else {
+                favoritesInteractor.removeFromFavorites(track.trackId)
+            }
+        }
+        updateFavoriteState(newState)
+    }
+
+    private fun observeFavoriteState(trackId: Long) {
+        favoriteJob?.cancel()
+        favoriteJob = viewModelScope.launch {
+            favoritesInteractor.observeFavorites()
+                .map { tracks -> tracks.any { it.trackId == trackId } }
+                .distinctUntilChanged()
+                .collect { isFavorite ->
+                    updateFavoriteState(isFavorite)
+                }
+        }
+    }
+
+    private fun updateFavoriteState(isFavorite: Boolean) {
+        currentTrack = currentTrack?.copy(isFavorite = isFavorite)
+        _playerState.postValue(
+            _playerState.value?.copy(
+                track = currentTrack,
+                isFavorite = isFavorite
+            ) ?: PlayerState(track = currentTrack, isFavorite = isFavorite)
+        )
+    }
+
     override fun onCleared() {
         super.onCleared()
         stopProgressUpdates()
         playerInteractor.releasePlayer()
+        favoriteJob?.cancel()
     }
 }
 
@@ -128,5 +173,6 @@ enum class PlaybackState {
 data class PlayerState(
     val track: Track? = null,
     val playbackState: PlaybackState = PlaybackState.TRACK_LOADED,
-    val currentTime: String = "00:00"
+    val currentTime: String = "00:00",
+    val isFavorite: Boolean = false
 )

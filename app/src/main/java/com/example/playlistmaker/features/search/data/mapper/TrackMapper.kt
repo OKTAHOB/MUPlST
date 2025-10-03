@@ -11,6 +11,7 @@ class TrackMapper {
             artistName = trackDto.artistName,
             trackTime = trackDto.trackTimeMillis,
             artworkUrl100 = trackDto.artworkUrl100,
+            artworkUrl512 = trackDto.artworkUrl100.replace("100x100", "512x512"),
             collectionName = trackDto.collectionName,
             releaseDate = trackDto.releaseDate,
             primaryGenreName = trackDto.primaryGenreName,

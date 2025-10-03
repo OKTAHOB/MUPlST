@@ -1,37 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="?attr/white_or_black"
     tools:context="com.example.playlistmaker.features.media.presentation.ui.FavoritesFragment">
 
-
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/favoritesPlaceholderGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="placeholderImage,placeholderMessage"
+        android:visibility="visible" />
 
     <ImageView
-        android:id="@+id/errorIcon"
+        android:id="@+id/placeholderImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_marginTop="106dp"
         android:src="@drawable/nothing_found"
-        android:visibility="visible"
-        tools:visibility="visible" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:importantForAccessibility="no" />
 
     <TextView
-        android:id="@+id/errorMessage"
+        android:id="@+id/placeholderMessage"
         style="@style/searchErrorMessage"
-        android:text="@string/media_is_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:paddingHorizontal="@dimen/margin_music_start"
-        android:paddingTop="@dimen/std_padding"
+        android:layout_marginTop="16dp"
+        android:text="@string/media_is_empty"
         android:textColor="?attr/tblack_or_white"
-        android:visibility="visible"
-        tools:visibility="visible" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/placeholderImage" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favoritesRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/track" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

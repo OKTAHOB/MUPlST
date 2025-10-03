@@ -141,13 +141,22 @@
             android:layout_height="wrap_content"
             android:id="@+id/search_history"
             android:visibility="visible">
-            
             <LinearLayout
                 android:id="@+id/historyContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+                .
+                <TextView
+                    android:id="@+id/historyTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    style="@style/u_search"
+                    android:text="@string/vi_search"
 
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="8dp"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/historyRecyclerView"
@@ -162,7 +171,8 @@
                     android:text="@string/clear_history"
                     android:layout_marginTop="24dp"
                     app:cornerRadius="54dp"
-                    style="@style/ref_btn"/>
+                    style="@style/ref_btn"
+                    android:onClick="clearHistory"/>
             </LinearLayout>
         </ScrollView>
     </FrameLayout>
