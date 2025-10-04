@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.features.search.domain.model.Track
+import com.example.playlistmaker.features.media.domain.interactor.PlaylistInteractor
+import com.example.playlistmaker.features.media.domain.model.Playlist
 import com.example.playlistmaker.features.media.domain.interactor.FavoritesInteractor
 import com.example.playlistmaker.features.player.domain.usecase.PlayerInteractor
+import com.example.playlistmaker.features.search.domain.model.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -18,19 +20,31 @@ import kotlinx.coroutines.flow.map
 
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
-    private val favoritesInteractor: FavoritesInteractor
+    private val favoritesInteractor: FavoritesInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private val _playerState = MutableLiveData<PlayerState>()
     val playerState: LiveData<PlayerState> = _playerState
 
+    private val _playlistsState = MutableLiveData<PlaylistSelectionState>(PlaylistSelectionState.Empty)
+    val playlistsState: LiveData<PlaylistSelectionState> = _playlistsState
+
+    private val _addTrackEvent = MutableLiveData<AddTrackToPlaylistEvent?>()
+    val addTrackEvent: LiveData<AddTrackToPlaylistEvent?> = _addTrackEvent
+
     private var isPlaying = false
     private var currentTrack: Track? = null
     private var progressJob: Job? = null
     private var favoriteJob: Job? = null
+    private var playlistsJob: Job? = null
 
     companion object {
         private const val PROGRESS_UPDATE_INTERVAL = 300L
+    }
+
+    init {
+        observePlaylists()
     }
 
     fun setTrack(track: Track) {
@@ -43,6 +57,13 @@ class PlayerViewModel(
         )
         preparePlayer()
         observeFavoriteState(track.trackId)
+    }
+
+    fun refreshPlaylists() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val playlists = playlistInteractor.getPlaylists()
+            emitPlaylistsState(playlists)
+        }
     }
 
     private fun preparePlayer() {
@@ -144,6 +165,40 @@ class PlayerViewModel(
         }
     }
 
+    private fun observePlaylists() {
+        playlistsJob?.cancel()
+        playlistsJob = viewModelScope.launch {
+            playlistInteractor.observePlaylists().collect { playlists ->
+                emitPlaylistsState(playlists)
+            }
+        }
+    }
+
+    fun onPlaylistSelected(playlist: Playlist) {
+        val track = currentTrack ?: return
+        if (playlist.trackIds.contains(track.trackId)) {
+            _addTrackEvent.value = AddTrackToPlaylistEvent.AlreadyExists(playlist.name)
+            return
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            playlistInteractor.addTrackToPlaylist(playlist.id, track)
+            _addTrackEvent.postValue(AddTrackToPlaylistEvent.Added(playlist.name))
+        }
+    }
+
+    fun onAddTrackEventConsumed() {
+        _addTrackEvent.value = null
+    }
+
+    private fun emitPlaylistsState(playlists: List<Playlist>) {
+        if (playlists.isEmpty()) {
+            _playlistsState.postValue(PlaylistSelectionState.Empty)
+        } else {
+            _playlistsState.postValue(PlaylistSelectionState.Content(playlists))
+        }
+    }
+
     private fun updateFavoriteState(isFavorite: Boolean) {
         currentTrack = currentTrack?.copy(isFavorite = isFavorite)
         _playerState.postValue(
@@ -159,6 +214,7 @@ class PlayerViewModel(
         stopProgressUpdates()
         playerInteractor.releasePlayer()
         favoriteJob?.cancel()
+        playlistsJob?.cancel()
     }
 }
 

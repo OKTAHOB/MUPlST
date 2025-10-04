@@ -1,7 +1,6 @@
 package com.example.playlistmaker.di
 
 import android.media.MediaPlayer
-import com.example.playlistmaker.features.media.domain.interactor.FavoritesInteractor
 import com.example.playlistmaker.features.player.data.repository.PlayerRepositoryImpl
 import com.example.playlistmaker.features.player.domain.repository.PlayerRepository
 import com.example.playlistmaker.features.player.domain.usecase.PlayerInteractor
@@ -26,7 +25,8 @@ val playerModule = module {
     viewModel {
         PlayerViewModel(
             playerInteractor = get(),
-            favoritesInteractor = get<FavoritesInteractor>()
+            favoritesInteractor = get(),
+            playlistInteractor = get()
         )
     }
 }
