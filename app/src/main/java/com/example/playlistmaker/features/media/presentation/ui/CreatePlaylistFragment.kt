@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
@@ -23,26 +24,27 @@ import com.example.playlistmaker.features.media.presentation.viewmodel.CreatePla
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class CreatePlaylistFragment : Fragment() {
+open class CreatePlaylistFragment : Fragment() {
 
-    private val viewModel: CreatePlaylistViewModel by viewModel()
+    protected open val viewModel: CreatePlaylistViewModel by viewModel()
 
-    private lateinit var backButton: ImageButton
-    private lateinit var coverImageView: ImageView
-    private lateinit var nameEditText: TextInputEditText
-    private lateinit var descriptionEditText: TextInputEditText
-    private lateinit var createButton: MaterialButton
+    protected lateinit var backButton: ImageButton
+    protected lateinit var coverImageView: ImageView
+    protected lateinit var nameEditText: TextInputEditText
+    protected lateinit var descriptionEditText: TextInputEditText
+    protected lateinit var createButton: MaterialButton
+    protected lateinit var titleTextView: TextView
 
-    private var selectedCoverUri: Uri? = null
+    protected var selectedCoverUri: Uri? = null
 
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
-                selectedCoverUri = uri
-                coverImageView.setImageURI(uri)
+                applyCoverUri(uri)
+                onCoverChanged()
             }
         }
 
@@ -57,23 +59,32 @@ class CreatePlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindViews(view)
+        configureUi()
         setupListeners()
         observeEvents()
         handleSystemBack()
+        onFragmentReady()
     }
 
-    private fun bindViews(view: View) {
+    protected open fun bindViews(view: View) {
         backButton = view.findViewById(R.id.backButton)
         coverImageView = view.findViewById(R.id.coverImageView)
         nameEditText = view.findViewById(R.id.nameEditText)
         descriptionEditText = view.findViewById(R.id.descriptionEditText)
         createButton = view.findViewById(R.id.createButton)
+        titleTextView = view.findViewById(R.id.titleTextView)
     }
 
-    private fun setupListeners() {
+    protected open fun configureUi() {
+        titleTextView.setText(getTitleTextRes())
+        createButton.setText(getActionButtonTextRes())
+    }
+
+    protected open fun setupListeners() {
         nameEditText.doOnTextChanged { text, _, _, _ ->
             createButton.isEnabled = !text.isNullOrBlank()
         }
+        createButton.isEnabled = !nameEditText.text.isNullOrBlank()
 
         backButton.setOnClickListener {
             handleExit()
@@ -86,34 +97,51 @@ class CreatePlaylistFragment : Fragment() {
         createButton.setOnClickListener {
             val name = nameEditText.text?.toString().orEmpty()
             val description = descriptionEditText.text?.toString()
-            viewModel.createPlaylist(name, description, selectedCoverUri?.toString())
+            onCreateButtonClicked(name, description, selectedCoverUri?.toString())
         }
+    }
+
+    protected open fun onCreateButtonClicked(name: String, description: String?, coverUri: String?) {
+        viewModel.createPlaylist(name, description, coverUri)
     }
 
     private fun observeEvents() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.events.collect { event ->
-                    when (event) {
-                        is CreatePlaylistEvent.Success -> {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.playlist_created_message, event.playlistName),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            findNavController().navigateUp()
-                        }
-                        CreatePlaylistEvent.Error -> {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.playlist_creation_error),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
+                    handleEvent(event)
                 }
             }
         }
+    }
+
+    protected open fun handleEvent(event: CreatePlaylistEvent) {
+        when (event) {
+            is CreatePlaylistEvent.Success -> onPlaylistSaved(event.playlistName)
+            CreatePlaylistEvent.Error -> onPlaylistSaveError()
+            CreatePlaylistEvent.PlaylistNotFound -> onPlaylistNotFound()
+        }
+    }
+
+    protected open fun onPlaylistSaved(playlistName: String) {
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.playlist_created_message, playlistName),
+            Toast.LENGTH_SHORT
+        ).show()
+        findNavController().navigateUp()
+    }
+
+    protected open fun onPlaylistSaveError() {
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.playlist_creation_error),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    protected open fun onPlaylistNotFound() {
+        onPlaylistSaveError()
     }
 
     private fun handleSystemBack() {
@@ -127,7 +155,7 @@ class CreatePlaylistFragment : Fragment() {
         )
     }
 
-    private fun handleExit() {
+    protected open fun handleExit() {
         if (hasUnsavedChanges()) {
             showExitConfirmation()
         } else {
@@ -135,13 +163,13 @@ class CreatePlaylistFragment : Fragment() {
         }
     }
 
-    private fun hasUnsavedChanges(): Boolean {
+    protected open fun hasUnsavedChanges(): Boolean {
         val hasName = !nameEditText.text.isNullOrBlank()
         val hasDescription = !descriptionEditText.text.isNullOrBlank()
         return hasName || hasDescription || selectedCoverUri != null
     }
 
-    private fun showExitConfirmation() {
+    protected open fun showExitConfirmation() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.confirm_playlist_exit_title)
             .setMessage(R.string.confirm_playlist_exit_message)
@@ -151,4 +179,25 @@ class CreatePlaylistFragment : Fragment() {
             }
             .show()
     }
+
+    protected open fun onCoverChanged() = Unit
+
+    protected fun applyCoverUri(uri: Uri?) {
+        selectedCoverUri = uri
+        displayCover(uri)
+    }
+
+    protected open fun displayCover(uri: Uri?) {
+        if (uri != null) {
+            coverImageView.setImageURI(uri)
+        } else {
+            coverImageView.setImageResource(R.drawable.background_for_adding_photo)
+        }
+    }
+
+    protected open fun onFragmentReady() = Unit
+
+    protected open fun getTitleTextRes(): Int = R.string.new_playlist
+
+    protected open fun getActionButtonTextRes(): Int = R.string.create
 }

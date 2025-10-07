@@ -9,4 +9,14 @@
         <item quantity="one">%d track</item>
         <item quantity="other">%d tracks</item>
     </plurals>
+
+    <plurals name="playlist_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+
+    <plurals name="playlist_share_track_count">
+        <item quantity="one">[%d] track</item>
+        <item quantity="other">[%d] tracks</item>
+    </plurals>
 </resources>

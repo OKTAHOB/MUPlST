@@ -11,9 +11,11 @@ import com.example.playlistmaker.features.media.domain.repository.FavoritesRepos
 import com.example.playlistmaker.features.media.domain.repository.PlaylistCoverStorage
 import com.example.playlistmaker.features.media.domain.repository.PlaylistRepository
 import com.example.playlistmaker.features.media.presentation.viewmodel.CreatePlaylistViewModel
+import com.example.playlistmaker.features.media.presentation.viewmodel.EditPlaylistViewModel
 import com.example.playlistmaker.features.media.presentation.viewmodel.FavoritesViewModel
 import com.example.playlistmaker.features.media.presentation.viewmodel.MediaLibraryViewModel
 import com.example.playlistmaker.features.media.presentation.viewmodel.PlaylistViewModel
+import com.example.playlistmaker.features.media.presentation.viewmodel.PlaylistDetailsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -30,4 +32,6 @@ val mediaModule = module {
     viewModel { PlaylistViewModel(get()) }
     viewModel { FavoritesViewModel(get()) }
     viewModel { CreatePlaylistViewModel(get()) }
+    viewModel { EditPlaylistViewModel(get(), get()) }
+    viewModel { PlaylistDetailsViewModel(get()) }
 }

@@ -5,6 +5,7 @@ import com.example.playlistmaker.features.media.domain.repository.PlaylistCoverS
 import com.example.playlistmaker.features.media.domain.repository.PlaylistRepository
 import com.example.playlistmaker.features.search.domain.model.Track
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class PlaylistInteractorImpl(
@@ -54,5 +55,25 @@ class PlaylistInteractorImpl(
 
     override suspend fun addTrackToPlaylist(playlistId: Long, track: Track) {
         playlistRepository.addTrackToPlaylist(playlistId, track)
+    }
+
+    override fun observePlaylist(playlistId: Long): Flow<Playlist?> {
+        return playlistRepository.observePlaylist(playlistId)
+    }
+
+    override suspend fun getPlaylistById(playlistId: Long): Playlist? {
+        return playlistRepository.getPlaylistById(playlistId)
+    }
+
+    override suspend fun getTracksByIds(trackIds: List<Long>): List<Track> {
+        return playlistRepository.getTracksByIds(trackIds)
+    }
+
+    override suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: Long) {
+        playlistRepository.removeTrackFromPlaylist(playlistId, trackId)
+    }
+
+    override suspend fun deletePlaylist(playlistId: Long) {
+        playlistRepository.deletePlaylist(playlistId)
     }
 }

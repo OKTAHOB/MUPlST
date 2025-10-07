@@ -25,6 +25,12 @@ interface PlaylistsDao {
     @Query("SELECT * FROM playlists WHERE id = :playlistId LIMIT 1")
     suspend fun getPlaylistById(playlistId: Long): PlaylistEntity?
 
+    @Query("SELECT * FROM playlists WHERE id = :playlistId LIMIT 1")
+    fun observePlaylistById(playlistId: Long): Flow<PlaylistEntity?>
+
     @Query("SELECT * FROM playlists WHERE name = :name LIMIT 1")
     suspend fun getPlaylistByName(name: String): PlaylistEntity?
+
+    @Query("DELETE FROM playlists WHERE id = :playlistId")
+    suspend fun deletePlaylist(playlistId: Long)
 }

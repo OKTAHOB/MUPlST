@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
+import com.example.playlistmaker.features.media.domain.model.Playlist
 import com.example.playlistmaker.features.media.presentation.viewmodel.PlaylistState
 import com.example.playlistmaker.features.media.presentation.viewmodel.PlaylistViewModel
 import com.google.android.material.button.MaterialButton
@@ -52,7 +54,9 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        playlistsAdapter = PlaylistsAdapter()
+        playlistsAdapter = PlaylistsAdapter { playlist ->
+            onPlaylistClicked(playlist)
+        }
         playlistsRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         playlistsRecyclerView.adapter = playlistsAdapter
     }
@@ -84,6 +88,15 @@ class PlaylistFragment : Fragment() {
                 placeholderText.visibility = View.VISIBLE
             }
         }
+    }
+
+    private fun onPlaylistClicked(playlist: Playlist) {
+        if (playlist.id == 0L) return
+        val args = bundleOf(PlaylistDetailsFragment.ARG_PLAYLIST_ID to playlist.id)
+        findNavController().navigate(
+            R.id.action_mediaLibraryFragment_to_playlistDetailsFragment,
+            args
+        )
     }
 
 
