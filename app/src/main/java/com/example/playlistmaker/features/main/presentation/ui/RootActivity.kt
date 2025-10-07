@@ -29,6 +29,7 @@ class RootActivity : AppCompatActivity() {
             val hideBottomNavigationDestinations = setOf(
                 R.id.playerFragment,
                 R.id.createPlaylistFragment,
+                R.id.editPlaylistFragment,
                 R.id.playlistDetailsFragment
             )
             bottomNav.visibility = if (destination.id in hideBottomNavigationDestinations) {

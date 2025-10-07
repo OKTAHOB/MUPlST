@@ -34,7 +34,7 @@ class PlaylistDetailsViewModel(
                     currentContent = null
                     _state.postValue(PlaylistDetailsState.NotFound)
                 } else {
-                    val tracks = playlistInteractor.getTracksByIds(playlist.trackIds)
+                    val tracks = playlistInteractor.getTracksByIds(playlist.trackIds.asReversed())
                     val totalDurationMillis = tracks.sumOf { it.trackTime }
                     val contentState = PlaylistDetailsState.Content(
                         playlist = playlist,
