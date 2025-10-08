@@ -11,4 +11,9 @@ interface PlaylistRepository {
     suspend fun getPlaylistByName(name: String): Playlist?
     suspend fun getPlaylists(): List<Playlist>
     suspend fun addTrackToPlaylist(playlistId: Long, track: Track)
+    fun observePlaylist(playlistId: Long): Flow<Playlist?>
+    suspend fun getPlaylistById(playlistId: Long): Playlist?
+    suspend fun getTracksByIds(trackIds: List<Long>): List<Track>
+    suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: Long)
+    suspend fun deletePlaylist(playlistId: Long)
 }

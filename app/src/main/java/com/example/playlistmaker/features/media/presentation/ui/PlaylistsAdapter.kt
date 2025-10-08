@@ -12,12 +12,14 @@ import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.features.media.domain.model.Playlist
 
-class PlaylistsAdapter : ListAdapter<Playlist, PlaylistsAdapter.PlaylistViewHolder>(DiffCallback) {
+class PlaylistsAdapter(
+    private val onPlaylistClick: (Playlist) -> Unit
+) : ListAdapter<Playlist, PlaylistsAdapter.PlaylistViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.item_playlist, parent, false)
-        return PlaylistViewHolder(view)
+        return PlaylistViewHolder(view, onPlaylistClick)
     }
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
@@ -25,7 +27,8 @@ class PlaylistsAdapter : ListAdapter<Playlist, PlaylistsAdapter.PlaylistViewHold
     }
 
     class PlaylistViewHolder(
-        view: View
+        view: View,
+        private val onPlaylistClick: (Playlist) -> Unit
     ) : RecyclerView.ViewHolder(view) {
 
         private val coverImage: ImageView = view.findViewById(R.id.ivPlaylistCover)
@@ -53,6 +56,10 @@ class PlaylistsAdapter : ListAdapter<Playlist, PlaylistsAdapter.PlaylistViewHold
                 playlist.trackCount,
                 playlist.trackCount
             )
+
+            itemView.setOnClickListener {
+                onPlaylistClick(playlist)
+            }
         }
     }
 

@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
-class CreatePlaylistViewModel(
-    private val playlistInteractor: PlaylistInteractor
+open class CreatePlaylistViewModel(
+    protected val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
-    private val _events = MutableSharedFlow<CreatePlaylistEvent>(replay = 0, extraBufferCapacity = 1)
+    protected val _events = MutableSharedFlow<CreatePlaylistEvent>(replay = 0, extraBufferCapacity = 1)
     val events: SharedFlow<CreatePlaylistEvent> = _events
 
     fun createPlaylist(name: String, description: String?, coverUri: String?) {
@@ -34,4 +34,5 @@ class CreatePlaylistViewModel(
 sealed class CreatePlaylistEvent {
     data class Success(val playlistName: String) : CreatePlaylistEvent()
     object Error : CreatePlaylistEvent()
+    object PlaylistNotFound : CreatePlaylistEvent()
 }

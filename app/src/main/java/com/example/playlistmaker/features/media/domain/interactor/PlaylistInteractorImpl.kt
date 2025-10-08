@@ -5,6 +5,7 @@ import com.example.playlistmaker.features.media.domain.repository.PlaylistCoverS
 import com.example.playlistmaker.features.media.domain.repository.PlaylistRepository
 import com.example.playlistmaker.features.search.domain.model.Track
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class PlaylistInteractorImpl(
@@ -35,24 +36,62 @@ class PlaylistInteractorImpl(
             trackIds = emptyList(),
             trackCount = 0
         )
-        return playlistRepository.createPlaylist(playlist)
+        return withContext(Dispatchers.IO) {
+            playlistRepository.createPlaylist(playlist)
+        }
     }
 
     override fun observePlaylists() = playlistRepository.observePlaylists()
 
     override suspend fun updatePlaylist(playlist: Playlist) {
-        playlistRepository.updatePlaylist(playlist)
+        withContext(Dispatchers.IO) {
+            playlistRepository.updatePlaylist(playlist)
+        }
     }
 
     override suspend fun getPlaylistByName(name: String): Playlist? {
-        return playlistRepository.getPlaylistByName(name.trim())
+        return withContext(Dispatchers.IO) {
+            playlistRepository.getPlaylistByName(name.trim())
+        }
     }
 
     override suspend fun getPlaylists(): List<Playlist> {
-        return playlistRepository.getPlaylists()
+        return withContext(Dispatchers.IO) {
+            playlistRepository.getPlaylists()
+        }
     }
 
     override suspend fun addTrackToPlaylist(playlistId: Long, track: Track) {
-        playlistRepository.addTrackToPlaylist(playlistId, track)
+        withContext(Dispatchers.IO) {
+            playlistRepository.addTrackToPlaylist(playlistId, track)
+        }
+    }
+
+    override fun observePlaylist(playlistId: Long): Flow<Playlist?> {
+        return playlistRepository.observePlaylist(playlistId)
+    }
+
+    override suspend fun getPlaylistById(playlistId: Long): Playlist? {
+        return withContext(Dispatchers.IO) {
+            playlistRepository.getPlaylistById(playlistId)
+        }
+    }
+
+    override suspend fun getTracksByIds(trackIds: List<Long>): List<Track> {
+        return withContext(Dispatchers.IO) {
+            playlistRepository.getTracksByIds(trackIds)
+        }
+    }
+
+    override suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: Long) {
+        withContext(Dispatchers.IO) {
+            playlistRepository.removeTrackFromPlaylist(playlistId, trackId)
+        }
+    }
+
+    override suspend fun deletePlaylist(playlistId: Long) {
+        withContext(Dispatchers.IO) {
+            playlistRepository.deletePlaylist(playlistId)
+        }
     }
 }

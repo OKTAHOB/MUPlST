@@ -53,4 +53,57 @@ class PlaylistRepositoryImpl(
         playlistsDao.updatePlaylist(updatedEntity)
         playlistTracksDao.insertTrack(PlaylistTrackMapper.mapToEntity(track))
     }
+
+    override fun observePlaylist(playlistId: Long): Flow<Playlist?> {
+        return playlistsDao.observePlaylistById(playlistId).map { entity ->
+            entity?.let { PlaylistMapper.mapToDomain(it) }
+        }
+    }
+
+    override suspend fun getPlaylistById(playlistId: Long): Playlist? {
+        return playlistsDao.getPlaylistById(playlistId)?.let { entity ->
+            PlaylistMapper.mapToDomain(entity)
+        }
+    }
+
+    override suspend fun getTracksByIds(trackIds: List<Long>): List<Track> {
+        if (trackIds.isEmpty()) return emptyList()
+        val allTracks = playlistTracksDao.getAllTracks()
+        val tracksById = allTracks.associateBy { it.trackId }
+        return trackIds.mapNotNull { id ->
+            tracksById[id]?.let { PlaylistTrackMapper.mapToDomain(it) }
+        }
+    }
+
+    override suspend fun removeTrackFromPlaylist(playlistId: Long, trackId: Long) {
+        val playlistEntity = playlistsDao.getPlaylistById(playlistId) ?: return
+        if (!playlistEntity.trackIds.contains(trackId)) return
+
+        val updatedTrackIds = playlistEntity.trackIds.filterNot { it == trackId }
+        val updatedEntity = playlistEntity.copy(
+            trackIds = updatedTrackIds,
+            trackCount = updatedTrackIds.size
+        )
+        playlistsDao.updatePlaylist(updatedEntity)
+
+        cleanupUnusedTracks(listOf(trackId))
+    }
+
+    override suspend fun deletePlaylist(playlistId: Long) {
+        val playlistEntity = playlistsDao.getPlaylistById(playlistId) ?: return
+        playlistsDao.deletePlaylist(playlistId)
+        cleanupUnusedTracks(playlistEntity.trackIds)
+    }
+
+    private suspend fun cleanupUnusedTracks(trackIds: Collection<Long>) {
+        if (trackIds.isEmpty()) return
+        val referencedTrackIds = playlistsDao.getPlaylists()
+            .flatMap { it.trackIds }
+            .toSet()
+        trackIds.forEach { trackId ->
+            if (!referencedTrackIds.contains(trackId)) {
+                playlistTracksDao.deleteTrack(trackId)
+            }
+        }
+    }
 }
