@@ -24,7 +24,6 @@ val playerModule = module {
 
     viewModel {
         PlayerViewModel(
-            playerInteractor = get(),
             favoritesInteractor = get(),
             playlistInteractor = get()
         )

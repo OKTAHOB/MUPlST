@@ -7,11 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.features.media.domain.interactor.PlaylistInteractor
 import com.example.playlistmaker.features.media.domain.model.Playlist
 import com.example.playlistmaker.features.media.domain.interactor.FavoritesInteractor
-import com.example.playlistmaker.features.player.domain.usecase.PlayerInteractor
+import com.example.playlistmaker.features.player.service.PlayerServiceController
+import com.example.playlistmaker.features.player.service.PlayerServiceState
 import com.example.playlistmaker.features.search.domain.model.Track
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 class PlayerViewModel(
-    private val playerInteractor: PlayerInteractor,
     private val favoritesInteractor: FavoritesInteractor,
     private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
@@ -33,29 +31,47 @@ class PlayerViewModel(
     private val _addTrackEvent = MutableLiveData<AddTrackToPlaylistEvent?>()
     val addTrackEvent: LiveData<AddTrackToPlaylistEvent?> = _addTrackEvent
 
-    private var isPlaying = false
     private var currentTrack: Track? = null
-    private var progressJob: Job? = null
     private var favoriteJob: Job? = null
     private var playlistsJob: Job? = null
-
-    companion object {
-        private const val PROGRESS_UPDATE_INTERVAL = 300L
-    }
+    private var serviceStateJob: Job? = null
+    private var playerService: PlayerServiceController? = null
+    private var isInForeground = true
+    private var isPlayerPrepared = false
 
     init {
         observePlaylists()
     }
 
+    fun bindService(service: PlayerServiceController) {
+        playerService = service
+        observeServiceState()
+        // Если трек уже установлен и плеер еще не подготовлен, подготовим плеер
+        if (currentTrack != null && !isPlayerPrepared) {
+            preparePlayer()
+        }
+    }
+
+    fun unbindService() {
+        playerService = null
+        serviceStateJob?.cancel()
+        serviceStateJob = null
+        isPlayerPrepared = false
+    }
+
     fun setTrack(track: Track) {
         currentTrack = track
+        isPlayerPrepared = false
         _playerState.value = PlayerState(
             track = track,
             playbackState = PlaybackState.TRACK_LOADED,
             currentTime = "00:00",
             isFavorite = track.isFavorite
         )
-        preparePlayer()
+        // Подготовим плеер только если сервис уже привязан и плеер еще не подготовлен
+        if (playerService != null && !isPlayerPrepared) {
+            preparePlayer()
+        }
         observeFavoriteState(track.trackId)
     }
 
@@ -66,77 +82,97 @@ class PlayerViewModel(
         }
     }
 
+    private fun observeServiceState() {
+        serviceStateJob?.cancel()
+        serviceStateJob = viewModelScope.launch {
+            playerService?.playerState?.collect { serviceState ->
+                when (serviceState) {
+                    is PlayerServiceState.Idle -> {
+                        isPlayerPrepared = false
+                    }
+                    is PlayerServiceState.Prepared -> {
+                        isPlayerPrepared = true
+                        _playerState.value = _playerState.value?.copy(
+                            playbackState = PlaybackState.PREPARED
+                        )
+                    }
+                    is PlayerServiceState.Playing -> {
+                        _playerState.value = _playerState.value?.copy(
+                            playbackState = PlaybackState.PLAYING,
+                            currentTime = formatTime(serviceState.currentPosition)
+                        )
+                        handleForegroundState(true)
+                    }
+                    is PlayerServiceState.Paused -> {
+                        _playerState.value = _playerState.value?.copy(
+                            playbackState = PlaybackState.PAUSED,
+                            currentTime = formatTime(serviceState.currentPosition)
+                        )
+                        handleForegroundState(false)
+                    }
+                    is PlayerServiceState.Completed -> {
+                        _playerState.value = _playerState.value?.copy(
+                            playbackState = PlaybackState.COMPLETED,
+                            currentTime = "00:00"
+                        )
+                        handleForegroundState(false)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun formatTime(position: Int): String {
+        val minutes = position / 60000
+        val seconds = (position % 60000) / 1000
+        return String.format("%02d:%02d", minutes, seconds)
+    }
+
     private fun preparePlayer() {
         currentTrack?.let { track ->
-            playerInteractor.playTrack(
+            playerService?.preparePlayer(
                 track.previewUrl,
-                onPrepared = {
-                    _playerState.value = _playerState.value?.copy(
-                        playbackState = PlaybackState.PREPARED
-                    )
-                },
-                onCompletion = {
-                    isPlaying = false
-                    stopProgressUpdates()
-                    _playerState.value = _playerState.value?.copy(
-                        playbackState = PlaybackState.COMPLETED,
-                        currentTime = "00:00"
-                    )
-                }
+                onPrepared = {},
+                onCompletion = {}
             )
         }
     }
 
     fun togglePlayback() {
-        if (isPlaying) {
-            playerInteractor.pausePlayer()
-            isPlaying = false
-            _playerState.value = _playerState.value?.copy(
-                playbackState = PlaybackState.PAUSED
-            )
-            stopProgressUpdates()
-        } else {
-            playerInteractor.startPlayer()
-            isPlaying = true
-            _playerState.value = _playerState.value?.copy(
-                playbackState = PlaybackState.PLAYING
-            )
-            startProgressUpdates()
-        }
-    }
-
-    private fun startProgressUpdates() {
-        progressJob?.cancel()
-        progressJob = viewModelScope.launch {
-            while (isActive && isPlaying) {
-                emitCurrentTime()
-                delay(PROGRESS_UPDATE_INTERVAL)
+        val currentState = _playerState.value?.playbackState
+        when (currentState) {
+            PlaybackState.PLAYING -> {
+                playerService?.pausePlayer()
+            }
+            PlaybackState.PREPARED,
+            PlaybackState.PAUSED,
+            PlaybackState.COMPLETED -> {
+                playerService?.startPlayer()
+            }
+            else -> {
+                // Если плеер не готов, ничего не делаем
             }
         }
     }
 
-    private fun stopProgressUpdates() {
-        progressJob?.cancel()
-        progressJob = null
+    private fun handleForegroundState(isPlaying: Boolean) {
+        if (!isInForeground && isPlaying) {
+            playerService?.showForegroundNotification()
+        } else {
+            playerService?.hideForegroundNotification()
+        }
     }
 
-    private fun emitCurrentTime() {
-        if (!isPlaying) return
-        val position = playerInteractor.getCurrentPosition()
-        val minutes = position / 60000
-        val seconds = (position % 60000) / 1000
-        val timeString = String.format("%02d:%02d", minutes, seconds)
-        _playerState.value = _playerState.value?.copy(currentTime = timeString)
+    fun onAppInForeground() {
+        isInForeground = true
+        playerService?.hideForegroundNotification()
     }
 
-    fun pausePlayer() {
-        if (isPlaying) {
-            playerInteractor.pausePlayer()
-            _playerState.value = _playerState.value?.copy(
-                playbackState = PlaybackState.PAUSED
-            )
-            isPlaying = false
-            stopProgressUpdates()
+    fun onAppInBackground() {
+        isInForeground = false
+        val currentState = _playerState.value?.playbackState
+        if (currentState == PlaybackState.PLAYING) {
+            playerService?.showForegroundNotification()
         }
     }
 
@@ -211,8 +247,7 @@ class PlayerViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        stopProgressUpdates()
-        playerInteractor.releasePlayer()
+        serviceStateJob?.cancel()
         favoriteJob?.cancel()
         playlistsJob?.cancel()
     }

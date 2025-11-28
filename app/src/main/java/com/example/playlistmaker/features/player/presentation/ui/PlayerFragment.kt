@@ -1,6 +1,13 @@
 package com.example.playlistmaker.features.player.presentation.ui
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +15,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +27,8 @@ import com.example.playlistmaker.features.player.presentation.viewmodel.Playback
 import com.example.playlistmaker.features.player.presentation.viewmodel.AddTrackToPlaylistEvent
 import com.example.playlistmaker.features.player.presentation.viewmodel.PlaylistSelectionState
 import com.example.playlistmaker.features.player.presentation.viewmodel.PlayerViewModel
+import com.example.playlistmaker.features.player.service.PlayerService
+import com.example.playlistmaker.features.player.service.PlayerServiceController
 import com.example.playlistmaker.features.search.domain.model.Track
 import com.google.gson.Gson
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -41,6 +52,29 @@ class PlayerFragment : Fragment() {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private val viewModel: PlayerViewModel by viewModel()
+    private var playerService: PlayerServiceController? = null
+    private var isBound = false
+
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        // Permission result handling
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as PlayerService.PlayerBinder
+            playerService = binder.getService()
+            isBound = true
+            playerService?.let { viewModel.bindService(it) }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+            playerService = null
+        }
+    }
+
     companion object {
         private const val TRACK_JSON_KEY = "track_json"
 
@@ -74,7 +108,30 @@ class PlayerFragment : Fragment() {
             setupBottomSheet()
             setupBackButton()
             observeViewModel()
+            bindPlayerService()
             viewModel.setTrack(track)
+            checkNotificationPermission()
+        }
+    }
+
+    private fun bindPlayerService() {
+        val intent = Intent(requireContext(), PlayerService::class.java).apply {
+            putExtra(PlayerService.EXTRA_TRACK_URL, track.previewUrl)
+            putExtra(PlayerService.EXTRA_TRACK_NAME, track.trackName)
+            putExtra(PlayerService.EXTRA_ARTIST_NAME, track.artistName)
+        }
+        requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
     }
 
@@ -116,6 +173,7 @@ class PlayerFragment : Fragment() {
         requireView().findViewById<TextView>(R.id.player_track_time_value).text =
             String.format("%02d:%02d", minutes, seconds)
 
+        playButton.isEnabled = false
         playButton.setOnStateChangeListener { isPlaying ->
             viewModel.togglePlayback()
         }
@@ -268,12 +326,32 @@ class PlayerFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.pausePlayer()
+        viewModel.onAppInBackground()
         hideBottomSheet()
     }
 
     override fun onResume() {
         super.onResume()
+        viewModel.onAppInForeground()
         viewModel.refreshPlaylists()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        
+        playerService?.let { service ->
+            val currentState = viewModel.playerState.value?.playbackState
+            if (currentState == PlaybackState.PLAYING) {
+                service.pausePlayer()
+            }
+            service.releasePlayer()
+            service.hideForegroundNotification()
+        }
+        
+        if (isBound) {
+            viewModel.unbindService()
+            requireContext().unbindService(serviceConnection)
+            isBound = false
+        }
     }
 } 
