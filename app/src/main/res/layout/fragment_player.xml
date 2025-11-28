@@ -120,12 +120,13 @@
                 app:layout_constraintTop_toTopOf="@id/player_btn_add_to_list"
                 app:layout_constraintBottom_toBottomOf="@id/player_btn_add_to_list"/>
 
-            <ImageView
+            <com.example.playlistmaker.features.player.presentation.ui.PlaybackButtonView
                 android:id="@+id/player_btn_play"
-                android:src="@drawable/btn_play"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="30dp"
+                app:playDrawable="@drawable/btn_play"
+                app:pauseDrawable="@drawable/btn_pause"
                 app:layout_constraintEnd_toStartOf="@id/player_btn_like"
                 app:layout_constraintStart_toEndOf="@id/player_btn_add_to_list"
                 app:layout_constraintTop_toBottomOf="@id/player_track_artist" />

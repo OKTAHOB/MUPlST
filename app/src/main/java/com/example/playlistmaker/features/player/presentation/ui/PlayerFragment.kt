@@ -26,7 +26,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerFragment : Fragment() {
 
-    private lateinit var playButton: ImageView
+    private lateinit var playButton: PlaybackButtonView
     private lateinit var currentTimeTextView: TextView
     private lateinit var track: Track
     private lateinit var likeButtonContainer: ImageView
@@ -116,7 +116,7 @@ class PlayerFragment : Fragment() {
         requireView().findViewById<TextView>(R.id.player_track_time_value).text =
             String.format("%02d:%02d", minutes, seconds)
 
-        playButton.setOnClickListener {
+        playButton.setOnStateChangeListener { isPlaying ->
             viewModel.togglePlayback()
         }
 
@@ -137,24 +137,24 @@ class PlayerFragment : Fragment() {
         viewModel.playerState.observe(viewLifecycleOwner) { state ->
             when (state.playbackState) {
                 PlaybackState.TRACK_LOADED -> {
-                    // Track is loaded, UI is already set up
+                    playButton.setState(false)
                 }
 
                 PlaybackState.PREPARED -> {
                     playButton.isEnabled = true
-                    playButton.setImageResource(R.drawable.btn_play)
+                    playButton.setState(false)
                 }
 
                 PlaybackState.PLAYING -> {
-                    playButton.setImageResource(R.drawable.btn_pause)
+                    playButton.setState(true)
                 }
 
                 PlaybackState.PAUSED -> {
-                    playButton.setImageResource(R.drawable.btn_play)
+                    playButton.setState(false)
                 }
 
                 PlaybackState.COMPLETED -> {
-                    playButton.setImageResource(R.drawable.btn_play)
+                    playButton.setState(false)
                 }
             }
 
