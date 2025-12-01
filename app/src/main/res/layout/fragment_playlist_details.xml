@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/yp_ltgray"
+    android:background="@color/yp_gray_light"
     tools:context="com.example.playlistmaker.features.media.presentation.ui.PlaylistDetailsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout

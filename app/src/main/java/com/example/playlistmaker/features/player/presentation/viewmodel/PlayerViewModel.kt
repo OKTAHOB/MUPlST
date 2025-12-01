@@ -149,9 +149,13 @@ class PlayerViewModel(
             PlaybackState.COMPLETED -> {
                 playerService?.startPlayer()
             }
-            else -> {
-                // Если плеер не готов, ничего не делаем
+            PlaybackState.TRACK_LOADED -> {
+                // Попробуем подготовить и запустить плеер
+                if (playerService != null && !isPlayerPrepared) {
+                    preparePlayer()
+                }
             }
+            else -> {}
         }
     }
 
